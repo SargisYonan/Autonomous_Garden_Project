@@ -1,0 +1,43 @@
+/* This html file is for the website */
+
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title> Autonomous Garden Project </title>
+
+/* Importing data from json file and parsing it */
+
+<script type = "text/javascript" src = "http://code.jquery.com/jquery.min.js"></script>
+<script type = "text/javascript">
+$(function(){
+    $.getJSON('test.json', function(data){
+        console.log('success');
+        $.each(data.packet, function(i,pack){
+            $('ul').append('<li>' +pack.time+' '+pack.moisture+'<li>');
+            });
+        }).error(function(){
+          console.log('error');
+          });
+    });
+</script>
+
+</head>
+
+<body>
+
+<p> Created by: </p>
+
+<ul>
+  <li> Sargis Yonan </li>
+  <li> Isaak Cherdak </li>
+  <li> August Valera </li>
+  <li> Michael Garcia </li>
+
+</ul>
+</body>
+
+</html>
