@@ -63,9 +63,12 @@
 	</md-card-avatar>
 	<md-card-header-text>
 	<span class="md-title">{{ hacker.name }}</span>
-		<span class="md-subhead">{{ hacker.git }}@GitHub</span>
+	<span class="md-subhead">{{ hacker.git }}</span>
 	</md-card-header-text>
 	</md-card-header>
+	<md-card-actions>
+	<md-button href="http://github.com/{{ hacker.git }}">GitHub</md-button>
+	</md-card-actions>
 	</md-card>
 	</md-content>
 </div>
@@ -93,14 +96,14 @@ angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
 		.primaryPalette('light-green')
-		.accentPalette('light-blue');
+		.accentPalette('brown');
 		})
 .controller("HackerCtrl", function($scope) {
 		$scope.hackers = [
 		{name:"Isaak Cherdak",git:"legendddhgf",img:"http://avatars2.githubusercontent.com/u/10329638?v=3&s=400"},
 		{name:"Michael Garcia",git:"mgarcia707",img:"http://avatars0.githubusercontent.com/u/16787217?v=3&s=400"},
 		{name:"August Valera",git:"4U6U57",img:"http://avatars1.githubusercontent.com/u/4676561?v=3&s=460"},
-		{name:"Sargis Yonan",git:"Sargis Yonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
+		{name:"Sargis Yonan",git:"SargisYonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
 		]});
 angular.module('FirebaseApp', ['firebase'])
 .factory("packetArray", ["$firebaseArray",
