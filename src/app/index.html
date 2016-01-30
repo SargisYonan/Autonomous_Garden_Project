@@ -1,0 +1,72 @@
+<html lang="en">
+<head>
+<!-- Angular Material style sheet -->
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+<script type="text/javascript" src ="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+		$.getJSON('test.json', function(data){
+				console.log('success');
+				$.each(data.packet, function(i,pack){
+						$('#fromjson').append('<li>' +pack.time+' '+pack.moisture+'<li>');
+						});
+				}).error(function(){
+					console.log('error');
+					});
+		});
+</script>
+</head>
+<body ng-app="BlankApp" ng-cloak>
+
+<md-toolbar>
+<div class="md-toolbar-tools">
+	<md-button class="md-icon-button" aria-label="Settings">
+	<md-icon md-svg-icon="img/icons/menu.svg"></md-icon>
+	</md-button>
+	<h2>
+		<span>Toolbar with Icon Buttons</span>
+	</h2>
+	<span flex></span>
+	<md-button class="md-icon-button" aria-label="Favorite">
+	<md-icon md-svg-icon="img/icons/favorite.svg" style="color: greenyellow;"></md-icon>
+	</md-button>
+	<md-button class="md-icon-button" aria-label="More">
+	<md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
+	</md-button>
+</div>
+</md-toolbar>
+
+<ul id="fromjson"></ul>
+
+<ul>
+	<li> Sargis Yonan </li>
+	<li> Isaak Cherdak </li>
+	<li> August Valera </li>
+	<li> Michael Garcia </li>
+</ul>
+
+<!-- Angular Material requires Angular.js Libraries -->
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+<!-- Your application bootstrap  -->
+<script type="text/javascript">    
+/**
+ * You must include the dependency on 'ngMaterial' 
+ */
+angular.module('BlankApp', ['ngMaterial']);
+</script>
+
+</body>
+</html>
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved. 
+Use of this source code is governed by an MIT-style license that can be in found
+in the LICENSE file at http://material.angularjs.org/license.
+															-->
