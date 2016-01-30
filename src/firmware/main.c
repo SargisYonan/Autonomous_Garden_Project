@@ -19,13 +19,7 @@ int main (void)
         GrabTemperature();
         ChangeState();
         STATE_FUNCTIONS[SystemStatus->state].OutputFunction();
-    /*
-    //moisture = ((1023 - moisture) * 100) / 1023;
-    sprintf(adcstr, "%d\n", moisture);
-    uart0_puts(adcstr);
-    memset(adcstr, '\0', 20);
-    */
-  }
+    }
 }
 
 CHECK_t SysInit (void)
