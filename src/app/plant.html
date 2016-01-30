@@ -17,7 +17,7 @@ $(function(){
     $.getJSON('test.json', function(data){
         console.log('success');
         $.each(data.packet, function(i,pack){
-            $('ul').append('<li>' +pack.time+' '+pack.moisture+'<li>');
+            $('#fromjson').append('<li>' +pack.time+' '+pack.moisture+'<li>');
             });
         }).error(function(){
           console.log('error');
@@ -31,12 +31,13 @@ $(function(){
 
 <p> Created by: </p>
 
+<ul id="fromjson"></ul>
+
 <ul>
   <li> Sargis Yonan </li>
   <li> Isaak Cherdak </li>
   <li> August Valera </li>
   <li> Michael Garcia </li>
-
 </ul>
 </body>
 
