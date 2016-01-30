@@ -1,11 +1,15 @@
 /* This html file is for the website */
 
-
 <!DOCTYPE html>
 
 <html>
 
 <head>
+
+<script src = "bower_components/webcomponentsjs/webcomponents.js"></script> 
+
+<link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html"> </link>
+
 
 <title> Autonomous Garden Project </title>
 
@@ -27,8 +31,12 @@ $(function(){
 
 </head>
 
-<body>
-
+<body class = "fullbleed layout vertical">
+<paper-header-panel class = "flex">
+<paper-toolbar>
+<div> Hello World! </div>
+</paper-toolbar>
+</paper-header-panel>
 <p> Created by: </p>
 
 <ul id="fromjson"></ul>
