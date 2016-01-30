@@ -1,3 +1,5 @@
+#include "common.h"
+
 void InitADC(void)
 {
   ADMUX = (1 << REFS0);                         // For Aref=AVcc;
