@@ -10,10 +10,11 @@
 #include <avr/interrupt.h>
 #include "UART/uart.h"
 
-#define TRUE 1
+#define SUCCESS 1
+#define ERROR   0
 #define BAUDRATE 19200
 
-#define PORT_ON(port,pin) port |= (1<<pin)
-#define PORT_OFF(port,pin) port &= ~(1<<pin)
+#define PORT_ON(PORT,PIN) port |= (1 << pin)
+#define PORT_OFF(PORT,PIN) port &= ~(1 << pin)
 
 #endif //_COMMON_H_

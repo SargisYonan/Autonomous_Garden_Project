@@ -2,9 +2,9 @@ AVR_GCC_CONTROLLER           = atmega2560
 BURNER						 = avrdude
 AVRDUDE_CONTROLLER 	         = m2560
 CC							 = avr-gcc
-CSOURCE						 = *.c UART/uart.c
+CSOURCE						 = *.c UART/uart.c ADC/adc.c
 #${CSOURCE:.c=.o}
-OBJECTS  					 = *.o #main.o uart.o
+OBJECTS  					 = *.o #main.o uart.o adc.o
 EXECUTABLE					 = main
 COMPILER_PATH				 = /dev/tty.usbmodemFA131
 #cu.usbmodemfd121

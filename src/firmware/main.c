@@ -2,7 +2,7 @@
 
 
 #include "common.h"
-#include "adc.h"
+#include "ADC/adc.h"
 
 
 bool SysInit (void);
@@ -24,7 +24,7 @@ int main (void)
   }
 }
 
-bool SysInit (void)
+uint8_t SysInit (void)
 {
   sei();  
   InitADC();  
