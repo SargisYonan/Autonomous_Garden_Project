@@ -2,42 +2,17 @@
 #include "finite_state_machine.h"
 
 
-typedef enum FSM_STATES 
-{
-    IDLE = 0,
-    VALVE_CLOSED,
-    VALVE_OPENED
-} States;
-
-
-typedef struct
-{
-    State state;
-    MSTR_t moisture_reading;
-    MSTR_t moisture_offset;
-    MSTR_t moisture_setpoint; 
-    float temperature;
-} FSM;
-
-
-typedef struct
-{
-    void(*OutputFunction)(void);   // OUTPUT FUNCTION
-} STATE_FUNCTIONS;
-STATE_FUNCTIONS *Output;
-
-
 /*
 NAME:   InitializeStateMachineStructure
-INPUT   pointer to an FSM to allocate and initialize
+INPUT   pointer to a SYSTEM to allocate and initialize
 RETURN: an allocated and initialized machine on success
         NULL on error
 */
 
-FSM *InitializeStateMachineStructure (FSM *machine)
+SYSTEM *InitializeStateMachineStructure (SYSTEM *machine)
 {
     machine = NULL;
-    machine = (FSM*)malloc(sizeof(FSM));
+    machine = (SYSTEM*)malloc(sizeof(SYSTEM));
     if (machine)
     {
         machine->state = IDLE;
@@ -62,7 +37,7 @@ NAME:   ProcessReceivedCommand
 RETURN: SUCCESS on successful manipulation
         ERROR on failure to change state
 */
-CHECK_t ProcessReceivedCommand (FSM *SystemStructure)
+CHECK_t ProcessReceivedCommand (void)
 {
     uint8_t rxBuffer[MAX_RX_LENGTH];
     char packet[MAX_PACKET_SIZE];
@@ -90,36 +65,47 @@ CHECK_t ProcessReceivedCommand (FSM *SystemStructure)
     switch (rxBuffer[0])
     {
         case GET_STATUS_COMMAND:
-
-        sprintf(packet, "/%d/%d/%d/%f/%d/", 
-            (int)(SystemStructure->moisture_reading), 
-            (int)(SystemStructure->moisture_offset), 
-            (int)(SystemStructure->moisture_setpoint), 
-            SystemStructure->temperature, 
-            (int)(SystemStructure->state);
-
-        SEND_PACKET(packet);
-        break;
+            sprintf(packet, "/%d/%d/%d/%f/%d/", 
+                (int)(SystemStructure->moisture_reading), 
+                (int)(SystemStructure->moisture_offset), 
+                (int)(SystemStructure->moisture_setpoint), 
+                SystemStructure->temperature, 
+                (int)(SystemStructure->state);
+            SEND_PACKET(packet);
+            break;
 
         case ENABLE_SYSTEM_COMMAND:
-        SystemStructure->state = VALVE_CLOSED;
-        break;    
+            SystemStructure->state = VALVE_CLOSED;
+            break;  
+
         case DISABLE_SYSTEM_COMMAND:
-        break;    
+            CLOSE_VALVE();
+            SystemStructure->state = IDLE;
+            break;    
 
         case GET_MOISTURE_READING_COMMAND:
-        break;
+            sprintf(packet, "/%d/", (int)(SystemStructure->moisture_reading));
+            SEND_PACKET(packet);
+            break;
+
         case GET_TEMP_READING_COMMAND:
-        break; 
+            sprintf(packet, "/%f/", SystemStructure->temperature);
+            SEND_PACKET(packet);
+            break; 
 
         case CHANGE_MOISTURE_SETPOINT:
-        break;
+            if (rxBuffer[1] <= 0) sprintf("/%d/", NEGATIVE_MOISTURE_SETPOINT_ERROR);
+            else if (rxBuffer[1] + SystemStructure->moisture_offset <= MAX_MOISTURE_THRESHOLD) SystemStructure->moisture_setpoint = rxBuffer[1];
+            break;
+
         case CHANGE_MOISTURE_OFFSET:
-        break;
+            if (rxBuffer[1] <= 0) sprintf("/%d/", NEGATIVE_MOISTURE_OFFSET_ERROR);
+            else if ((rxBuffer[1] + SystemStructure->moisture_setpoint) <= MAX_MOISTURE_THRESHOLD) SystemStructure->moisture_setpoint = rxBuffer[1];
+            break;
         default:
+        sprintf("/%d/", UNRECOGNIZED_COMMAND_ERROR);
         break;
     }
-
     CLEAR_RX_BUFFER();
 }
 
@@ -128,13 +114,21 @@ NAME:   ChangeState
 RETURN: SUCCESS on successful state change
         ERROR on failure to change state
 */
-CHECK_t ChangeState (void);
-
+CHECK_t ChangeState (void)
+{
+    if ()
+}
 
 /* Actuates valve open */
-void OPEN_VALVE (void);
+void OPEN_VALVE (void)
+{
+    VALVE_SWITCH_OPEN;  // PB5
+}
 
 /* Actuates valve closed */
-void CLOSE_VALVE (void);
+void CLOSE_VALVE (void)
+{
+    VALVE_SWITCH_CLOSE; // PB5
+}
 
 #endif

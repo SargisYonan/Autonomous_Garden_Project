@@ -13,7 +13,7 @@
 #define NUMBER_OF_STATES 3
 
 
-typedef enum FSM_STATES 
+typedef enum SYSTEM_STATES 
 {
     IDLE = 0,
     VALVE_CLOSED,
@@ -28,7 +28,7 @@ typedef struct
     MSTR_t moisture_offset;
     MSTR_t moisture_setpoint; 
     float temperature;
-} FSM;
+} SYSTEM;
 
 
 typedef struct
@@ -40,12 +40,12 @@ STATE_FUNCTIONS *Output;
 
 /*
 NAME:   InitializeStateMachineStructure
-INPUT   pointer to an FSM to allocate and initialize
+INPUT   pointer to an SYSTEM to allocate and initialize
 RETURN: an allocated and initialized machine on success
         NULL on error
 */
 
-FSM *InitializeStateMachineStructure (FSM *machine);
+SYSTEM *InitializeStateMachineStructure (SYSTEM *machine);
 
 /*
 NAME:   ProcessReceivedCommand
