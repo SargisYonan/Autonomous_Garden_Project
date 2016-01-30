@@ -13,7 +13,7 @@
 	<md-icon aria-label="menu" class="material-icons">menu</md-icon>
 	</md-button>
 	<h2>
-		<span>Something to do with plants</span>
+		<span>AutoGarden</span>
 	</h2>
 	<span flex></span>
 	<md-button class="md-icon-button" aria-label="Favorite">
@@ -24,6 +24,9 @@
 	</md-button>
 </div>
 </md-toolbar>
+<md-content>
+<md-tabs md-dynamic-height>
+<md-tab label="Home">
 <div ng-controller="PacketCtrl" ng-cloak>
 	<md-content class="md-padding" layout-xs="column" layout="row">
 	<md-card ng-repeat="packet in packets">
@@ -52,16 +55,27 @@
 	</md-list-->
 	</md-content>
 </div>
-
-<ul id="fromjson"></ul>
-
-<ul>
-	<li> Sargis Yonan </li>
-	<li> Isaak Cherdak </li>
-	<li> August Valera </li>
-	<li> Michael Garcia </li>
-</ul>
-
+</md-tab>
+<md-tab label="Hackers">
+<div ng-controller="HackerCtrl" ng-cloak>
+	<md-content class="md-padding" layout-xs="column" layout="row">
+	<md-card ng-repeat="hacker in hackers">
+	<md-card-header>
+	<md-card-avatar>
+	<img class="md-user-avatar" src="{{ hacker.img }}"/>
+	</md-card-avatar>
+	<md-card-header-text>
+	<span class="md-title">{{ hacker.name }}</span>
+		<span class="md-subhead">{{ hacker.git }}@GitHub</span>
+	</md-card-header-text>
+	</md-card-header>
+	</md-card>
+	</md-content>
+</div>
+</md-tab>
+</md-tabs>
+</md-content>
+</div>
 <!-- Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
@@ -83,7 +97,14 @@ angular.module('MaterialApp', ['ngMaterial'])
 		$mdThemingProvider.theme('default')
 		.primaryPalette('light-green')
 		.accentPalette('light-blue');
-		});
+		})
+.controller("HackerCtrl", function($scope) {
+		$scope.hackers = [
+		{name:"Isaak Cherdak",git:"legendddhgf",img:"http://avatars2.githubusercontent.com/u/10329638?v=3&s=400"},
+		{name:"Michael Garcia",git:"mgarcia707",img:"http://avatars0.githubusercontent.com/u/16787217?v=3&s=400"},
+		{name:"August Valera",git:"4U6U57",img:"http://avatars1.githubusercontent.com/u/4676561?v=3&s=460"},
+		{name:"Sargis Yonan",git:"Sargis Yonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
+		]});
 angular.module('FirebaseApp', ['firebase'])
 .factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
@@ -93,7 +114,7 @@ angular.module('FirebaseApp', ['firebase'])
 		}])
 .controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
-		$scope.packets = packetArray;	
+		$scope.packets = packetArray;
 		}
 ]);
 angular.module('PlantApp', ['MaterialApp', 'FirebaseApp']);
