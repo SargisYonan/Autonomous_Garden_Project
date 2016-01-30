@@ -25,8 +25,23 @@
 </div>
 </md-toolbar>
 <div ng-controller="PacketCtrl" ng-cloak>
-	<md-content>
+	<md-content class="md-padding" layout-xs="column" layout="row">
+	<md-card ng-repeat="packet in packets">
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">{{ packet.time }}</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
 	<md-list>
+	<md-list-item><p>Moisture: {{ packet.moist }}</p></md-list-item>
+	<md-list-item><p>Rain: {{ packet.rain }}</p></md-list-item>
+	<md-list-item><p>Sunlight: {{ packet.sun }}</p></md-list-item>
+	<md-list-item><p>Temperature: {{ packet.temp }}</p></md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+	<!--md-list>
 	<md-subheader>Raw data from sensors</md-subheader>
 	<md-list-item ng-repeat="packet in packets">
 	<div class="md-list-item-text" layout="column">
@@ -34,7 +49,7 @@
 		<p>{{ packet.moist }}</p>
 	</div>
 	</md-list-item>
-	</md-list>
+	</md-list-->
 	</md-content>
 </div>
 
@@ -62,9 +77,7 @@
 
 <!-- Your application bootstrap  -->
 <script type="text/javascript">    
-/**
- * You must include the dependency on 'ngMaterial' 
- */
+var betterIngredientsBetterPizza = "Papa Johns";
 angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
