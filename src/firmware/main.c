@@ -18,15 +18,12 @@ STATE_FUNCTIONS Output[] = {{&CLOSE_VALVE},{&CLOSE_VALVE},{&OPEN_VALVE}};
 int main (void)
 {
     if (!SysInit()) main();
-                    BULLSHIT();
-
     while (TRUE)
     {
         ChangeState();
         if (uart0_available() >= 1) ProcessReceivedCommand();
         GrabMoisture();
         GrabTemperature();
-
     }
 }
 

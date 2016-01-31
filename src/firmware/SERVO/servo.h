@@ -8,7 +8,7 @@
 #define SERVO_CLOSED 0
 
 void InitializeServoPin (void);
-void changeServoState(uint8_t state);
+void ChangeServoState(uint8_t state);
 
 typedef struct SERVO_STATE
 {
