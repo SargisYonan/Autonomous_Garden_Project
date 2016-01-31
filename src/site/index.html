@@ -13,8 +13,9 @@
 	<md-icon aria-label="local_florist" class="material-icons">local_florist</md-icon>
 	</md-button>
 	<h2>
-		<span>AutoGarden</span>
+		<span>#AutoGarden</span>
 	</h2>
+	<md-progress-circular class="md-accent"></md-progress-circular>
 	<span flex></span>
 	<md-button aria-label="GitHub" href="http://github.com/SargisYonan/Autonomous_Garden_Project">View source on GitHub
 	<md-icon aria-label="track_changes" class="material-icons">track_changes</md-icon>
@@ -23,12 +24,8 @@
 </md-toolbar>
 <md-content>
 <md-tabs md-dynamic-height>
-<md-tab label="Home"> 
+<md-tab label="Home">
 <div ng-controller="PacketCtrl" ng-cloak>
-	<div ng-show="loading" style="margin:auto;width:100;height:100">
-		<md-progress-circular md-diameter="100" style="text-align:center">
-		</md-progress-circular>
-	</div>
 	<md-content class="md-padding" layout-xs="column" layout="column"> 
 	<md-card ng-repeat="packet in packets | orderBy:'-$id'">
 	<md-card-title>
@@ -97,22 +94,70 @@
 	</md-content>
 </div>
 </md-tab>
+<md-tab label="Jobs">
+<div ng-controller="CommandCtrl" ng-cloak>
+	<md-list layout-padding>
+	<div ng-repeat="command in commands | orderBy:'time'">
+		<md-list-item>
+		<h4>{{ command.time }}</h4>
+		<span flex></span>
+		<md-button class="md-raised md-warn" ng-click="commands.$remove(command)">Cancel</md-button>
+		<md-chips readonly>
+		<md-chip class="md-primary">{{ command.command }}</md-chip>
+		<md-chip>{{ command.argument }}</md-chip>
+		<md-chips>
+		</md-list-item>
+		<md-divider></md-divider>
+	</div>
+	</md-list>
+</div>
+</md-tab>
 <md-tab label="Settings">
+<md-subheader class="md-primary">Device Info</md-subheader>
 <div ng-controller="ConfigCtrl" ng-cloak>
-	<md-list>
+	<md-list layout-padding>
 	<md-list-item ng-repeat="config in configs">
 	<md-input-container>
-		<label>{{ config.$id }}</label>
-		<input ng-model="config.$value" ng-change="configs.$save(config)">
+	<label>{{ config.$id }}</label>
+	<input ng-model="config.$value" ng-change="configs.$save(config)">
 	</md-input-container>
 	</md-list-item>
 	</md-list>
+</div>
+<md-divider></md-divider>
+<md-subheader class="md-primary">Commands</md-subheader>
+<div ng-controller="CommandCtrl" ng-cloak>
+	<md-list layout-padding>
+	<md-list-item>
+	<p>Enable the device</p><span flex></span>
+	<md-button class="md-raised md-primary" ng-click="sendEnable()">Enable</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Disable the device</p><span flex></span>
+	<md-button class="md-raised md-warn" ng-click="sendDisable()">Disable</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Halt the device (minutes)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.halt" min="0" max="255" aria-label="delay"></md-slider>
+	<md-button class="md-raised md-accent" ng-click="sendHalt()">Halt</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Change moisture setpoint (%)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.setpoint" min="0" max="100" aria-label="level"></md-slider>
+	<md-button class="md-raised md-accent" ng-click="sendSetpoint()">Setpoint</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Change moisture offset (%)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.offset" min="0" max="100" aria-label="level"></md-slider>
+	<md-button class="md-raised md-accent" ng-click="sendOffset()">Offset</md-button>
+	</md-list-item>
+	<md-list>
 </div>
 </md-tab>
 <md-tab label="Hackers">
 <div ng-controller="HackerCtrl" ng-cloak>
 	<md-content class="md-padding" layout-xs="row" layout="column">
-	<md-card ng-repeat="hacker in hackers">
+	<md-card ng-repeat="hacker in hackers | orderBy:'name'">
 	<md-card-header>
 	<md-card-avatar>
 	<img class="md-user-avatar" src="{{ hacker.img }}"/>
@@ -176,18 +221,16 @@ angular.module('MaterialApp', ['ngMaterial'])
 var app = angular.module('FirebaseApp', ['firebase']);
 app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/packet/');
+		var ref = new Firebase(mixtapebase + deviceid + '/packet/').limitToLast(100);	
 		return $firebaseArray(ref);
 		}]);
 app.controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
-		$scope.loading = true;
 		$scope.packets = packetArray;
-		$scope.loading = false;
 		}]);
 app.factory("configArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/config/');
+		var ref = new Firebase(mixtapebase + deviceid + '/config/').limitToLast(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("ConfigCtrl", ["$scope", "configArray",
@@ -196,13 +239,59 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		}]);
 app.factory("commandArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/command/');
+		var ref = new Firebase(mixtapebase + deviceid + '/command/').limitToFirst(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("CommandCtrl", ["$scope", "commandArray",
 		function($scope, commandArray) {
-		$scope.command = commandArray;
-		}]);
+		$scope.commands = commandArray;
+		$scope.configure = {halt:0,setpoint:0,offset:0};	
+		$scope.sendEnable = function() {
+		var ts = new Date().toUTCString();
+		$scope.commands.$add({
+time: ts,
+command: "ENABLE_SYSTEM_COMMAND",
+argument: 0
+});
+		$scope.command = "";
+		};
+		$scope.sendDisable = function() {
+		var ts = new Date().toUTCString();
+		$scope.commands.$add({
+time: ts,
+command: "DISABLE_SYSTEM_COMMAND",
+argument: 0
+});
+$scope.command = "";
+};
+$scope.sendHalt = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "HALT_SYSTEM_COMMAND",
+argument: $scope.configure.halt
+});
+$scope.command = "";
+};
+$scope.sendSetpoint = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "CHANGE_MOISTURE_SETPOINT",
+argument: $scope.configure.setpoint
+});
+$scope.command = "";
+};
+$scope.sendOffset = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "CHANGE_MOISTURE_OFFSET",
+argument: $scope.configure.offset
+});
+$scope.command = "";
+};	
+}]);
 angular.module('ChartApp', ['chart.js'])
 .controller("MoistureCtrl", function($scope) {
 		});
