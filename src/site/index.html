@@ -30,7 +30,7 @@
 		</md-progress-circular>
 	</div>
 	<md-content class="md-padding" layout-xs="column" layout="column"> 
-	<md-card ng-repeat="packet in packets">
+	<md-card ng-repeat="packet in packets | orderBy:'-$id'">
 	<md-card-title>
 	<md-card-title-text>
 	<span class="md-headline">{{ packet.$id }}</span>
@@ -62,7 +62,7 @@
 	<span flex></span>
 	<h3>Level</h3>
 	</md-list-item>
-	<md-list-item ng-repeat="packet in packets">
+	<md-list-item ng-repeat="packet in packets | orderBy:'-$id'">
 	<md-divider md-inset></md-divider>
 	<p>{{ packet.$id }}</p>
 	<span flex></span>
@@ -84,7 +84,7 @@
 	<span flex></span>
 	<h3>Level</h3>
 	</md-list-item>
-	<md-list-item ng-repeat="packet in packets">
+	<md-list-item ng-repeat="packet in packets | orderBy:'-$id'">
 	<md-divider md-inset></md-divider>
 	<p>{{ packet.$id }}</p>
 	<span flex></span>
@@ -97,6 +97,12 @@
 </div>
 </md-tab>
 <md-tab label="Settings">
+<md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+	<md-input-container>
+		<label>Device Id</label>
+		<input ng-model="deviceid">
+	</md-input-container>
+</md-content>
 <div ng-controller="ConfigCtrl" ng-cloak>
 	<p ng-repeat="config in configs">{{ config }}</p>
 </div>
@@ -185,6 +191,15 @@ app.factory("configArray", ["$firebaseArray",
 app.controller("ConfigCtrl", ["$scope", "configArray",
 		function($scope, configArray) {
 		$scope.configs = configArray;
+		}]);
+app.factory("commandArray", ["$firebaseArray",
+	function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + deviceid + '/command/');
+		return $firebaseArray(ref);
+		}]);
+app.controller("CommandCtrl", ["$scope", "commandArray",
+		function($scope, commandArray) {
+		$scope.command = commandArray;
 		}]);
 angular.module('ChartApp', ['chart.js'])
 .controller("MoistureCtrl", function($scope) {
