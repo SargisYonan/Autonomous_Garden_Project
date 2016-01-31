@@ -100,7 +100,10 @@
 	<md-list-item ng-repeat="command in commands | orderBy:'-time'">
 	<div class="md-list-item-text">
 		<h4>{{ command.time }}</h4>
-		<p>{{command.command}} <em>{{command.argument}}</em></p>
+		<md-chips readonly>
+		<md-chip class="md-primary">{{ command.command }}</md-chip>
+		<md-chip>{{ command.argument }}</md-chip>
+		<md-chips>	
 	</div>
 	<md-divider></md-divider>
 	</md-list-item>
@@ -134,17 +137,17 @@
 	<md-list-item>
 	<p>Halt the device (minutes)</p>
 	<md-slider class="md-accent" flex md-discrete ng-model="configure.halt" min="0" max="255" aria-label="delay"></md-slider>
-	<md-button class="md-raised" ng-click="sendHalt()">Halt</md-button>
+	<md-button class="md-raised md-accent" ng-click="sendHalt()">Halt</md-button>
 	</md-list-item>
 	<md-list-item>
 	<p>Change moisture setpoint (%)</p>
-	<md-slider class="md-accent" flex md-discrete ng-model="configure.setpoint" min="0" max="100" aria-label="delay"></md-slider>
-	<md-button class="md-raised" ng-click="sendSetpoint()">Setpoint</md-button>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.setpoint" min="0" max="100" aria-label="level"></md-slider>
+	<md-button class="md-raised md-accent" ng-click="sendSetpoint()">Setpoint</md-button>
 	</md-list-item>
 	<md-list-item>
 	<p>Change moisture offset (%)</p>
-	<md-slider class="md-accent" flex md-discrete ng-model="configure.offset" min="0" max="100" aria-label="delay"></md-slider>
-	<md-button class="md-raised" ng-click="sendOffset()">Offset</md-button>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.offset" min="0" max="100" aria-label="level"></md-slider>
+	<md-button class="md-raised md-accent" ng-click="sendOffset()">Offset</md-button>
 	</md-list-item>
 	<md-list>
 </div>
