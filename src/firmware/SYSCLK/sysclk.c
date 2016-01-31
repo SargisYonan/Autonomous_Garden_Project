@@ -54,7 +54,6 @@ void idle_mins(int mins) {
 ISR(TIMER1_OVF_vect) {
 
   //TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
-  uart0_puts("\nTEIUYSKJS>FKUHSÇÒH\n");
   if (--count <= 0) {
     SystemStatus->state = VALVE_CLOSED;
   } else {
