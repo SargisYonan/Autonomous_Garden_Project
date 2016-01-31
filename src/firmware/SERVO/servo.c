@@ -27,7 +27,7 @@ void ChangeServoState(uint8_t state)
   ISR_COUNT = 0;
   SERVO_TIME = 0;
   SERVO_COUNT = 0;
-  if (state == SERVO_OPEN) SERVO_COUNT_TWO = 3;
+  if (state == SERVO_OPEN) SERVO_COUNT_TWO = 2;
   else SERVO_COUNT_TWO = 4;
   TCCR3A = 0;    // set entire TCCR1A register to 0
   TCCR3B = 0;    // set entire TCCR1B register to 0

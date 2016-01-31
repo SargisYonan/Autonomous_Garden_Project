@@ -19,13 +19,22 @@ xbee = XBee(ser)
 ser.flushInput()
 ser.flushOutput()
 
-GET_STATUS = "AA"
-ENABLE = "EE"
+
+FunctionMap = {
+'GET_STATUS_COMMAND':"0xAA",
+'ENABLE_SYSTEM_COMMAND':"0xEE",
+'HALT_SYSTEM_COMMAND':"0x56",
+'DISABLE_SYSTEM_COMMAND':"0xDD",
+'GET_MOISTURE_READING_COMMAND':"0xBB",
+'GET_TEMP_READING_COMMAND':"0xCC",
+'GET_TEMP_READING_COMMAND':"0x56",
+'CHANGE_MOISTURE_SETPOINT':"0xFF",
+'CHANGE_MOISTURE_OFFSET':"0x11"
+}
 NO_ARG = "00"
-
-
 DEVICE_ID = '4200000069'
-
+ENABLE = "EE"
+GET_STATUS = "AA"
 
 class FrameGen:
     DELIMITER = "2D"
@@ -87,5 +96,22 @@ while True:
                 print "CURR_STATE: " + state
                 ser.flushInput()
                 ser.flushOutput()
+
+
+
+
+
+
+        result = firebase.get('/device/'+DEVICE_ID+'/command/', None)
+        for key, value in result.items():
+            rxCom = value['command']
+            rxArg = '0x' + value['argument']
+            print rxArg
+            Generator.GenerateByteArray(FunctionMap[rxCom], rxArg)
+            Generator.SendFrame(ser)
+            status = xbee.wait_read_frame()
+            while not status.has_key("rf_data"):
+                firebase.delete('/device/'+DEVICE_ID+'/command/', key)
+
     except KeyboardInterrupt:
         break
