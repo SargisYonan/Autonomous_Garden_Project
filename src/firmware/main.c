@@ -19,10 +19,10 @@ int main (void)
     if (!SysInit()) main();
     while (TRUE)
     {
+        ChangeState();
         if (uart0_available() >= 1) ProcessReceivedCommand();
         GrabMoisture();
         GrabTemperature();
-        ChangeState();
     }
 }
 
