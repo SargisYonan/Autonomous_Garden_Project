@@ -1,6 +1,4 @@
-#include "common.h"
 #include "adc.h"
-
 
 void InitADC(void)
 {

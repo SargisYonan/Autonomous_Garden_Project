@@ -5,8 +5,7 @@
 
 
 #include "../common.h"
-#include "../COMMANDS/commands_list"
-#include "../COMMANDS/command_library.h"
+#include "../COMMANDS/commands_list.h"
 
 
 #define MSTR_t uint16_t
@@ -21,22 +20,20 @@ typedef enum SYSTEM_STATES
 } States;
 
 
-typedef struct
+typedef struct SYSTEM
 {
-    State state;
+    States state;
     MSTR_t moisture_reading;
     MSTR_t moisture_offset;
     MSTR_t moisture_setpoint; 
     float temperature;
 } SYSTEM;
+SYSTEM *SystemStatus;
 
-
-typedef struct
+typedef struct STATE_FUNCTIONS
 {
     void(*OutputFunction)(void);   // OUTPUT FUNCTION
 } STATE_FUNCTIONS;
-STATE_FUNCTIONS *Output;
-
 
 /*
 NAME:   InitializeStateMachineStructure
@@ -45,7 +42,7 @@ RETURN: an allocated and initialized machine on success
         NULL on error
 */
 
-SYSTEM *InitializeStateMachineStructure (SYSTEM *machine);
+SYSTEM *InitializeStateMachineStructure (void);
 
 /*
 NAME:   ProcessReceivedCommand

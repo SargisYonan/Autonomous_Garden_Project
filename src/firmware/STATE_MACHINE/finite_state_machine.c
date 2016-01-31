@@ -9,9 +9,9 @@ RETURN: an allocated and initialized machine on success
         NULL on error
 */
 
-SYSTEM *InitializeStateMachineStructure (SYSTEM *machine)
+SYSTEM *InitializeStateMachineStructure (void)
 {
-    machine = NULL;
+    SYSTEM *machine = NULL;
     machine = (SYSTEM*)malloc(sizeof(SYSTEM));
     if (machine)
     {
@@ -20,14 +20,6 @@ SYSTEM *InitializeStateMachineStructure (SYSTEM *machine)
         machine->moisture_setpoint = DEFAULT_MOISTURE_SETPOINT;
         machine->moisture_offset = DEFAULT_MOISTURE_OFFSET;
         machine->temperature = 0.0;
-
-        Output = (STATE_FUNCTIONS*)malloc(NUMBER_OF_STATES * sizeof(STATE_FUNCTIONS));
-        if (!Output)
-        {
-            free(machine);
-            return NULL;
-        }
-        Output = {&CLOSE_VALVE, &CLOSE_VALVE, &OPEN_VALVE};
     }
     return machine;
 }
@@ -41,72 +33,83 @@ CHECK_t ProcessReceivedCommand (void)
 {
     uint8_t rxBuffer[MAX_RX_LENGTH];
     char packet[MAX_PACKET_SIZE];
-
+    memset(rxBuffer, '\0', MAX_RX_LENGTH);
     memset(packet, '\0', MAX_PACKET_SIZE);
 
-    for (int i = 0; i < MAX_RECEIVE_LENGTH; i++)
+    for (int i = 0; i < MAX_RX_LENGTH; i++)
     {
         if (RX_BUFFER_EMPTY) _delay_ms(RX_TIMEOUT);
 
         rxBuffer[i] = GRAB_RX_BYTE;
         if (rxBuffer[i] == RX_DELIMITER) 
         {
-            rxByteArray[i] = '\0';
+            rxBuffer[i] = '\0';
             break;
         }
     }
-
-    if (rxBuffer[MAX_RECEIVE_LENGTH - 1] != RX_DELIMITER) 
-    {
-        CLEAR_RX_BUFFER();
-        return;
-    }
-
+    _delay_ms(RX_TIMEOUT);
     switch (rxBuffer[0])
     {
         case GET_STATUS_COMMAND:
             sprintf(packet, "/%d/%d/%d/%f/%d/", 
-                (int)(SystemStructure->moisture_reading), 
-                (int)(SystemStructure->moisture_offset), 
-                (int)(SystemStructure->moisture_setpoint), 
-                SystemStructure->temperature, 
-                (int)(SystemStructure->state);
+                (int)SystemStatus->moisture_reading, 
+                (int)SystemStatus->moisture_offset, 
+                (int)SystemStatus->moisture_setpoint, 
+                SystemStatus->temperature, 
+                (int)SystemStatus->state);
             SEND_PACKET(packet);
             break;
 
         case ENABLE_SYSTEM_COMMAND:
-            SystemStructure->state = VALVE_CLOSED;
+            SystemStatus->state = VALVE_CLOSED;
+            sprintf(packet, "/%d/", ENABLED_SYSTEM_SUCCESSFULLY);
+            SEND_PACKET(packet);
             break;  
 
         case DISABLE_SYSTEM_COMMAND:
             CLOSE_VALVE();
-            SystemStructure->state = IDLE;
+            SystemStatus->state = IDLE;
+            sprintf(packet, "/%d/", DISABLED_SYSTEM_SUCCESSFULLY);
+            SEND_PACKET(packet);
             break;    
 
         case GET_MOISTURE_READING_COMMAND:
-            sprintf(packet, "/%d/", (int)(SystemStructure->moisture_reading));
+            sprintf(packet, "/%d/", (int)(SystemStatus->moisture_reading));
             SEND_PACKET(packet);
             break;
 
         case GET_TEMP_READING_COMMAND:
-            sprintf(packet, "/%f/", SystemStructure->temperature);
+            sprintf(packet, "/%f/", SystemStatus->temperature);
             SEND_PACKET(packet);
             break; 
 
         case CHANGE_MOISTURE_SETPOINT:
-            if (rxBuffer[1] <= 0) sprintf("/%d/", NEGATIVE_MOISTURE_SETPOINT_ERROR);
-            else if (rxBuffer[1] + SystemStructure->moisture_offset <= MAX_MOISTURE_THRESHOLD) SystemStructure->moisture_setpoint = rxBuffer[1];
+            if (rxBuffer[1] <= 0) sprintf(packet, "/%d/", NEGATIVE_MOISTURE_SETPOINT_ERROR);
+            else if ((rxBuffer[1] + SystemStatus->moisture_offset) <= MAX_MOISTURE_THRESHOLD)
+            {
+                SystemStatus->moisture_setpoint = rxBuffer[1];
+                sprintf(packet, "/%d/", CHANGED_MOISTURE_SETPOINT_SUCCESSFULLY);
+                SEND_PACKET(packet);
+            }
             break;
 
         case CHANGE_MOISTURE_OFFSET:
-            if (rxBuffer[1] <= 0) sprintf("/%d/", NEGATIVE_MOISTURE_OFFSET_ERROR);
-            else if ((rxBuffer[1] + SystemStructure->moisture_setpoint) <= MAX_MOISTURE_THRESHOLD) SystemStructure->moisture_setpoint = rxBuffer[1];
+            if (rxBuffer[1] <= 0) sprintf(packet, "/%d/", NEGATIVE_MOISTURE_OFFSET_ERROR);
+            else if ((rxBuffer[1] + SystemStatus->moisture_setpoint) <= MAX_MOISTURE_THRESHOLD)
+            {
+                SystemStatus->moisture_setpoint = rxBuffer[1];
+                sprintf(packet, "/%d/", CHANGED_MOISTURE_OFFSET_SUCCESSFULLY);
+                SEND_PACKET(packet);            
+            }
             break;
+
         default:
-        sprintf("/%d/", UNRECOGNIZED_COMMAND_ERROR);
-        break;
+            sprintf(packet, "/%d/", UNRECOGNIZED_COMMAND_ERROR);
+            SEND_PACKET(packet);
+            break;
     }
     CLEAR_RX_BUFFER();
+    return SUCCESS;
 }
 
 /*
@@ -116,19 +119,33 @@ RETURN: SUCCESS on successful state change
 */
 CHECK_t ChangeState (void)
 {
-    if ()
+    if (SystemStatus->state == IDLE) return SUCCESS;
+    if (MOISTURE_READING 
+        >= (MOISTURE_SETPOINT + MOISTURE_OFFSET)
+        && (CURRENT_STATE != VALVE_CLOSED))
+    {
+        CURRENT_STATE = VALVE_CLOSED;
+        CLOSE_VALVE();
+    }
+    else if (MOISTURE_READING 
+        <= (MOISTURE_SETPOINT - MOISTURE_OFFSET)
+        && (CURRENT_STATE != VALVE_OPENED))
+    {
+        CURRENT_STATE = VALVE_OPENED;
+        OPEN_VALVE();
+    }
+
+    return SUCCESS;
 }
 
 /* Actuates valve open */
 void OPEN_VALVE (void)
 {
-    VALVE_SWITCH_OPEN;  // PB5
+    PORTB = 0x80;//\if (VALVE_STATUS_CLOSED) VALVE_SWITCH_OPEN;  // PB5
 }
 
 /* Actuates valve closed */
 void CLOSE_VALVE (void)
 {
-    VALVE_SWITCH_CLOSE; // PB5
+    PORTB = 0x00;//if (VALVE_STATUS_OPEN) VALVE_SWITCH_CLOSE; // PB5
 }
-
-#endif
