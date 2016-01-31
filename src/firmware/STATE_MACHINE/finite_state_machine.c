@@ -1,6 +1,6 @@
 // Finite State Machine Definition
 #include "finite_state_machine.h"
-
+#include "../SYSCLK/sysclk.h"
 
 /*
 NAME:   InitializeStateMachineStructure
@@ -50,6 +50,12 @@ CHECK_t ProcessReceivedCommand (void)
     _delay_ms(RX_TIMEOUT);
     switch (rxBuffer[0])
     {
+        case HALT_SYSTEM:
+            idle_mins(rxBuffer[1]);
+            sprintf(packet, "\n%d", rxBuffer[1]);
+            SEND_PACKET(packet);
+
+            break;
         case GET_STATUS_COMMAND:
             sprintf(packet, "/%d/%d/%d/%f/%d/", 
                 (int)SystemStatus->moisture_reading, 

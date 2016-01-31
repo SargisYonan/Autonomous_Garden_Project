@@ -11,6 +11,7 @@
 #define GET_MOISTURE_READING_COMMAND	0xBB
 #define GET_TEMP_READING_COMMAND		0xCC 
 
+#define HALT_SYSTEM                     0x56
 #define CHANGE_MOISTURE_SETPOINT        0xFF
 #define CHANGE_MOISTURE_OFFSET          0x11
 
