@@ -162,10 +162,10 @@
 	<p>Get some suggestions based on global database of plants.</p>
 	<label>Plant</label>
 	<md-select ng-model="weed">
-	<md-option ng-repeat="plant in plants" value="{{ plant }}">{{ plant.$id }}</md-option>
+	<md-option ng-repeat="plant in plants | orderBy:'$id'" value="{{ plant }}">{{ plant.$id }}</md-option>
 	</md-select>
-	<p>Recommended moisture setpoint: {{ weed.setpoint }}</p>
-	<p>Recommended moisture offset: {{ weed.offset }}</p>
+	<p ng-if="weed">Recommended moisture setpoint: {{ weed.setpoint }}</p>
+	<p ng-if="weed">Recommended moisture offset: {{ weed.offset }}</p>
 	</md-input-container>
 	</md-list-item>
 	</md-list>
@@ -247,6 +247,7 @@ app.factory("plantArray", ["$firebaseArray",
 app.controller("PlantCtrl", ["$scope", "plantArray",
 		function($scope, plantArray) {
 		$scope.plants = plantArray;
+		$scope.weed;
 		}]);
 app.factory("configArray", ["$firebaseArray",
 		function($firebaseArray) {
