@@ -40,6 +40,7 @@
 	<md-list>
 	<md-list-item><p>Moisture: {{ packet.moisture }}</p></md-list-item>
 	<md-list-item><p>Temperature: {{ packet.temperature }}</p></md-list-item>
+	<md-list-item><p>Valve State: {{ packet.valve_state }}</p></md-list-item>
 	</md-list>
 	</md-card-content>
 	</md-card>
@@ -97,14 +98,12 @@
 </div>
 </md-tab>
 <md-tab label="Settings">
-<md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
-	<md-input-container>
-		<label>Device Id</label>
-		<input ng-model="deviceid">
-	</md-input-container>
-</md-content>
 <div ng-controller="ConfigCtrl" ng-cloak>
-	<p ng-repeat="config in configs">{{ config }}</p>
+	<md-list>
+	<md-list-item ng-repeat="config in configs">
+	<p>{{ config }}</p>
+	</md-list-item>
+	</md-list>
 </div>
 </md-tab>
 <md-tab label="Hackers">
@@ -184,7 +183,7 @@ app.controller("PacketCtrl", ["$scope", "packetArray",
 		$scope.loading = false;
 		}]);
 app.factory("configArray", ["$firebaseArray",
-	function($firebaseArray) {
+		function($firebaseArray) {
 		var ref = new Firebase(mixtapebase + deviceid + '/config/');
 		return $firebaseArray(ref);
 		}]);
@@ -193,7 +192,7 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		$scope.configs = configArray;
 		}]);
 app.factory("commandArray", ["$firebaseArray",
-	function($firebaseArray) {
+		function($firebaseArray) {
 		var ref = new Firebase(mixtapebase + deviceid + '/command/');
 		return $firebaseArray(ref);
 		}]);
