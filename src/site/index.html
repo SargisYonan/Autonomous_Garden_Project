@@ -153,6 +153,23 @@
 	</md-list-item>
 	<md-list>
 </div>
+<md-divider></md-divider>
+<md-subheader class="md-primary">Help</md-subheader>
+<div ng-controller="PlantCtrl" ng-cloak>	
+	<md-list layout-padding>
+	<md-list-item>	
+	<md-input-container>
+	<p>Get some suggestions based on global database of plants.</p>
+	<label>Plant</label>
+	<md-select ng-model="weed">
+	<md-option ng-repeat="plant in plants" value="{{ plant }}">{{ plant.$id }}</md-option>
+	</md-select>
+	<p>Recommended moisture setpoint: {{ weed.setpoint }}</p>
+	<p>Recommended moisture offset: {{ weed.offset }}</p>
+	</md-input-container>
+	</md-list-item>
+	</md-list>
+</div>
 </md-tab>
 <md-tab label="Hackers">
 <div ng-controller="HackerCtrl" ng-cloak>
@@ -197,7 +214,7 @@
 <script type="text/javascript">    
 var betterIngredientsBetterPizza = "Papa Johns";
 // http://urbandictionary.com/define.php?term=my+mixtape
-var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/';
+var mixtapebase = 'https://burning-fire-9965.firebaseio.com/';
 var deviceid = '4200000069';
 angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
@@ -215,16 +232,25 @@ angular.module('MaterialApp', ['ngMaterial'])
 var app = angular.module('FirebaseApp', ['firebase']);
 app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/packet/').limitToLast(100);	
+		var ref = new Firebase(mixtapebase + 'device/' + deviceid + '/packet/').limitToLast(100);	
 		return $firebaseArray(ref);
 		}]);
 app.controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
 		$scope.packets = packetArray;
 		}]);
+app.factory("plantArray", ["$firebaseArray",
+		function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + '0/plants/').limitToLast(50);
+		return $firebaseArray(ref);
+		}]);
+app.controller("PlantCtrl", ["$scope", "plantArray",
+		function($scope, plantArray) {
+		$scope.plants = plantArray;
+		}]);
 app.factory("configArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/config/').limitToLast(50);
+		var ref = new Firebase(mixtapebase + 'device/' + deviceid + '/config/').limitToLast(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("ConfigCtrl", ["$scope", "configArray",
@@ -233,7 +259,7 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		}]);
 app.factory("commandArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/command/').limitToFirst(50);
+		var ref = new Firebase(mixtapebase + 'device/' + deviceid + '/command/').limitToFirst(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("CommandCtrl", ["$scope", "commandArray",
@@ -256,7 +282,7 @@ time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
 argument: '0'
 });
-$scope.command = "";
+		$scope.command = "";
 };
 $scope.sendHalt = function() {
 	var ts = new Date().toUTCString();
