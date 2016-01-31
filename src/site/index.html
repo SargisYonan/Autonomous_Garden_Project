@@ -114,18 +114,6 @@
 </md-tab>
 <md-tab label="Settings">
 <md-subheader class="md-primary">Device Info</md-subheader>
-<div id="map"></div>
-<script type="text/javascript">
-
-var map;
-function initMap() {
-	map = new google.maps.Map(document.getElementById('map'), {
-center: {lat: -34.397, lng: 150.644},
-zoom: 8
-});
-}
-
-</script>
 <div ng-controller="ConfigCtrl" ng-cloak>
 	<md-list layout-padding>
 	<md-list-item ng-repeat="config in configs">
@@ -190,7 +178,7 @@ zoom: 8
 </md-content>
 </div>
 
-<!-- Better libraries, better frameworks, Papa.js -->
+<!-- Better libraries, better frameworks, PapaJS -->
 
 <!-- Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -201,17 +189,16 @@ zoom: 8
 <!-- Angular Material Library -->
 <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
 
-<!-- Firebase Library -->
+<!-- Firebase -->
 <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
 
-<!-- Bootstrap  -->
+<!-- Your application bootstrap  -->
 <script type="text/javascript">    
 var betterIngredientsBetterPizza = "Papa Johns";
 // http://urbandictionary.com/define.php?term=my+mixtape
 var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/';
 var deviceid = '4200000069';
-// Angular-Material bootstrap
 angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
@@ -225,7 +212,6 @@ angular.module('MaterialApp', ['ngMaterial'])
 		{name:"August Valera",git:"4U6U57",img:"http://avatars1.githubusercontent.com/u/4676561?v=3&s=460"},
 		{name:"Sargis Yonan",git:"SargisYonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
 		]});
-// Firebase bootstrap
 var app = angular.module('FirebaseApp', ['firebase']);
 app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
@@ -270,7 +256,7 @@ time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
 argument: '0'
 });
-		$scope.command = "";
+$scope.command = "";
 };
 $scope.sendHalt = function() {
 	var ts = new Date().toUTCString();
@@ -301,10 +287,6 @@ $scope.command = "";
 };	
 }]);
 angular.module('PlantApp', ['MaterialApp', 'FirebaseApp']);
-</script>
-<!-- Google Maps API -->
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0FKpyf481CaMXqQoARyM3vfOkyfLz5os&callback=initMap">
 </script>
 </body>
 </html>
