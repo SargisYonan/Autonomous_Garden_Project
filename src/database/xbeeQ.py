@@ -91,6 +91,8 @@ while True:
                     firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'valve_state', "OPEN")
                 else:
                     firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'valve_state', "CLOSED")
+                print "================================="
+                print st
                 print "MOISTURE: " + moisture_reading
                 print "TEMP: " + temperature_reading
                 print "CURR_STATE: " + state
@@ -106,7 +108,6 @@ while True:
                 rxArg = value['argument']
                 if str(rxArg) == "0":
                     rxArg = "00"
-
                 print rxCom
                 Generator.GenerateByteArray(FunctionMap[rxCom], rxArg)
                 Generator.SendFrame(ser)
