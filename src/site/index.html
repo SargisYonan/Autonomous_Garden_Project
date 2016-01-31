@@ -1,0 +1,212 @@
+<html lang="en">
+<head>
+<!-- Angular Material style sheet -->
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+<script type="text/javascript" src ="http://code.jquery.com/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body ng-app="PlantApp" ng-cloak>
+
+<md-toolbar>
+<div class="md-toolbar-tools">
+	<md-button class="md-icon-button" aria-label="Home" href="http://SargisYonan.github.io/Autonomous_Garden_Project/src/site">
+	<md-icon aria-label="local_florist" class="material-icons">local_florist</md-icon>
+	</md-button>
+	<h2>
+		<span>AutoGarden</span>
+	</h2>
+	<span flex></span>
+	<md-button aria-label="GitHub" href="http://github.com/SargisYonan/Autonomous_Garden_Project">View source on GitHub
+	<md-icon aria-label="track_changes" class="material-icons">track_changes</md-icon>
+	</md-button>
+</div>
+</md-toolbar>
+<md-content>
+<md-tabs md-dynamic-height>
+<md-tab label="Home"> 
+<div ng-controller="PacketCtrl" ng-cloak>
+	<div ng-show="loading" style="margin:auto;width:100;height:100">
+		<md-progress-circular md-diameter="100" style="text-align:center">
+		</md-progress-circular>
+	</div>
+	<md-content class="md-padding" layout-xs="column" layout="column"> 
+	<md-card ng-repeat="packet in packets | orderBy:'-$id'">
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">{{ packet.$id }}</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
+	<md-list>
+	<md-list-item><p>Moisture: {{ packet.moisture }}</p></md-list-item>
+	<md-list-item><p>Temperature: {{ packet.temperature }}</p></md-list-item>
+	<md-list-item><p>Valve State: {{ packet.valve_state }}</p></md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+	</md-content>
+</div>
+</md-tab>
+<md-tab label="Data">
+<div ng-controller="PacketCtrl" ng-cloak>
+	<md-content class="md-padding" layout-xs="column" layout="row">
+	<md-card flex>
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">Moisture</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
+	<md-list>
+	<md-list-item>
+	<h3>Time</h3>
+	<span flex></span>
+	<h3>Level</h3>
+	</md-list-item>
+	<md-list-item ng-repeat="packet in packets | orderBy:'-$id'">
+	<md-divider md-inset></md-divider>
+	<p>{{ packet.$id }}</p>
+	<span flex></span>
+	<p align="right">{{ packet.moisture }}</p>
+	</md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+	<md-card flex>
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">Temperature</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
+	<md-list>
+	<md-list-item>
+	<h3>Time</h3>
+	<span flex></span>
+	<h3>Level</h3>
+	</md-list-item>
+	<md-list-item ng-repeat="packet in packets | orderBy:'-$id'">
+	<md-divider md-inset></md-divider>
+	<p>{{ packet.$id }}</p>
+	<span flex></span>
+	<p align="right">{{ packet.temperature }}</p>
+	</md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+	</md-content>
+</div>
+</md-tab>
+<md-tab label="Settings">
+<div ng-controller="ConfigCtrl" ng-cloak>
+	<md-list>
+	<md-list-item ng-repeat="config in configs">
+	<md-input-container>
+		<label>{{ config.$id }}</label>
+		<input ng-model="config.$value" ng-change="configs.$save(config)">
+	</md-input-container>
+	</md-list-item>
+	</md-list>
+</div>
+</md-tab>
+<md-tab label="Hackers">
+<div ng-controller="HackerCtrl" ng-cloak>
+	<md-content class="md-padding" layout-xs="row" layout="column">
+	<md-card ng-repeat="hacker in hackers">
+	<md-card-header>
+	<md-card-avatar>
+	<img class="md-user-avatar" src="{{ hacker.img }}"/>
+	</md-card-avatar>
+	<md-card-header-text>
+	<span class="md-title">{{ hacker.name }}</span>
+	<span class="md-subhead">{{ hacker.git }}</span>
+	</md-card-header-text>
+	</md-card-header>
+	<md-card-actions>
+	<md-button href="http://github.com/{{ hacker.git }}">GitHub</md-button>
+	</md-card-actions>
+	</md-card>	
+	</md-content>
+</div>
+</md-tab>
+</md-tabs>
+</md-content>
+</div>
+
+<!-- Better libraries, better frameworks, PapaJOHNS -->
+
+<!-- Angular.js Libraries -->
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+<!-- Firebase -->
+<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
+
+<!-- Angular Chart -->
+<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.min.js"></script>
+<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.min.js.map"></script>
+<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.css"></script>
+<script src-"http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.css.map"></script>
+
+<!-- Your application bootstrap  -->
+<script type="text/javascript">    
+var betterIngredientsBetterPizza = "Papa Johns";
+// http://urbandictionary.com/define.php?term=my+mixtape
+var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/';
+var deviceid = '4200000069';
+angular.module('MaterialApp', ['ngMaterial'])
+.config(function($mdThemingProvider) {
+		$mdThemingProvider.theme('default')
+		.primaryPalette('light-green')
+		.accentPalette('brown');
+		})
+.controller("HackerCtrl", function($scope) {
+		$scope.hackers = [
+		{name:"Isaak Cherdak",git:"legendddhgf",img:"http://avatars2.githubusercontent.com/u/10329638?v=3&s=400"},
+		{name:"Michael Garcia",git:"mgarcia707",img:"http://avatars0.githubusercontent.com/u/16787217?v=3&s=400"},
+		{name:"August Valera",git:"4U6U57",img:"http://avatars1.githubusercontent.com/u/4676561?v=3&s=460"},
+		{name:"Sargis Yonan",git:"SargisYonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
+		]});
+var app = angular.module('FirebaseApp', ['firebase']);
+app.factory("packetArray", ["$firebaseArray",
+		function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + deviceid + '/packet/');
+		return $firebaseArray(ref);
+		}]);
+app.controller("PacketCtrl", ["$scope", "packetArray",
+		function($scope, packetArray) {
+		$scope.loading = true;
+		$scope.packets = packetArray;
+		$scope.loading = false;
+		}]);
+app.factory("configArray", ["$firebaseArray",
+		function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + deviceid + '/config/');
+		return $firebaseArray(ref);
+		}]);
+app.controller("ConfigCtrl", ["$scope", "configArray",
+		function($scope, configArray) {
+		$scope.configs = configArray;
+		}]);
+app.factory("commandArray", ["$firebaseArray",
+		function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + deviceid + '/command/');
+		return $firebaseArray(ref);
+		}]);
+app.controller("CommandCtrl", ["$scope", "commandArray",
+		function($scope, commandArray) {
+		$scope.command = commandArray;
+		}]);
+angular.module('ChartApp', ['chart.js'])
+.controller("MoistureCtrl", function($scope) {
+		});
+angular.module('PlantApp', ['MaterialApp', 'FirebaseApp']);
+</script>
+</body>
+</html>
