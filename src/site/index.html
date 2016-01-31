@@ -16,7 +16,7 @@
 		<span>AutoGarden</span>
 	</h2>
 	<span flex></span>
-	<md-button class="md-icon-button" aria-label="GitHub" href="http://github.com/SargisYonan/Autonomous_Garden_Project">
+	<md-button aria-label="GitHub" href="http://github.com/SargisYonan/Autonomous_Garden_Project">View source on GitHub
 	<md-icon aria-label="track_changes" class="material-icons">track_changes</md-icon>
 	</md-button>
 </div>
@@ -50,6 +50,57 @@
 	</div>
 	</md-list-item>
 	</md-list-->
+	</md-content>
+</div>
+</md-tab>
+<md-tab label="Raw Data">
+<div ng-controller="PacketCtrl" ng-cloak>
+	<md-content class="md-padding" layout-xs="column" layout="row">
+	<md-card style="width:40%">
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">Moisture</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
+	<md-list>
+	<md-list-item>
+	<h3>Time</h3>
+	<span flex></span>
+	<h3>Level</h3>
+	</md-list-item>
+	<md-list-item ng-repeat="packet in packets">
+	<md-divider md-inset></md-divider>
+	<p>{{ packet.time }}</p>
+	<span flex></span>
+	<p align="right">{{ packet.moist }}</p>
+	</md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+	<md-card style="width:40%">
+	<md-card-title>
+	<md-card-title-text>
+	<span class="md-headline">Temperature</span>
+	</md-card-title-text>
+	</md-card-title>
+	<md-card-content>
+	<md-list>
+	<md-list-item>
+	<h3>Time</h3>
+	<span flex></span>
+	<h3>Level</h3>
+	</md-list-item>
+	<md-list-item ng-repeat="packet in packets">
+	<md-divider md-inset></md-divider>
+	<p>{{ packet.time }}</p>
+	<span flex></span>
+	<p align="right">{{ packet.temp }}</p>
+	</md-list-item>
+	</md-list>
+	</md-card-content>
+	</md-card>
+
 	</md-content>
 </div>
 </md-tab>
