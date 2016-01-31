@@ -86,14 +86,19 @@
 	</md-list-item>
 	<md-list-item ng-repeat="packet in packets">
 	<md-divider md-inset></md-divider>
-	<p>{{ packet.time }}</p>
+	<p>{{ packet.$id }}</p>
 	<span flex></span>
-	<p align="right">{{ packet.temp }}</p>
+	<p align="right">{{ packet.temperature }}</p>
 	</md-list-item>
 	</md-list>
 	</md-card-content>
 	</md-card>
 	</md-content>
+</div>
+</md-tab>
+<md-tab label="Settings">
+<div ng-controller="ConfigCtrl" ng-cloak>
+	<p ng-repeat="config in configs">{{ config }}</p>
 </div>
 </md-tab>
 <md-tab label="Hackers">
@@ -120,7 +125,7 @@
 </md-content>
 </div>
 
-<!-- Better libraries, better pizza, Papa Johns -->
+<!-- Better libraries, better frameworks, PapaJOHNS -->
 
 <!-- Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -145,7 +150,8 @@
 <script type="text/javascript">    
 var betterIngredientsBetterPizza = "Papa Johns";
 // http://urbandictionary.com/define.php?term=my+mixtape
-var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/'; 
+var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/';
+var deviceid = '4200000069';
 angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
@@ -159,21 +165,27 @@ angular.module('MaterialApp', ['ngMaterial'])
 		{name:"August Valera",git:"4U6U57",img:"http://avatars1.githubusercontent.com/u/4676561?v=3&s=460"},
 		{name:"Sargis Yonan",git:"SargisYonan",img:"http://avatars2.githubusercontent.com/u/5349027?v=3&s=400"}
 		]});
-angular.module('FirebaseApp', ['firebase'])
-.factory("packetArray", ["$firebaseArray",
+var app = angular.module('FirebaseApp', ['firebase']);
+app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-	  var id = "4200000069";
-		//id = 0;
-		var ref = new Firebase(mixtapebase + id + '/packet/');
+		var ref = new Firebase(mixtapebase + deviceid + '/packet/');
 		return $firebaseArray(ref);
-		}])
-.controller("PacketCtrl", ["$scope", "packetArray",
+		}]);
+app.controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
 		$scope.loading = true;
 		$scope.packets = packetArray;
 		$scope.loading = false;
-		}
-]);
+		}]);
+app.factory("configArray", ["$firebaseArray",
+	function($firebaseArray) {
+		var ref = new Firebase(mixtapebase + deviceid + '/config/');
+		return $firebaseArray(ref);
+		}]);
+app.controller("ConfigCtrl", ["$scope", "configArray",
+		function($scope, configArray) {
+		$scope.configs = configArray;
+		}]);
 angular.module('ChartApp', ['chart.js'])
 .controller("MoistureCtrl", function($scope) {
 		});
