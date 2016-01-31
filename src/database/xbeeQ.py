@@ -58,8 +58,8 @@ print ack
 
 result = firebase.get('/device', None)
 
-if not hasattr(result, DEVICE_ID):
-   result = firebase.put('/device', DEVICE_ID, {'loc': '0, 0'})
+#if not hasattr(result, DEVICE_ID):
+ #  result = firebase.put('/device', DEVICE_ID, {'loc': '0, 0'})
 
 
 while True:
@@ -67,18 +67,25 @@ while True:
         Generator.GenerateByteArray(GET_STATUS, NO_ARG)
         Generator.SendFrame(ser)
         status = xbee.wait_read_frame()
-        time.sleep(5)
+        #time.sleep(5)
         status_str = str(status)
         if status.has_key("rf_data"):
-            moisture_reading = status['rf_data'].split('/')[1]
-            temperature_reading = status['rf_data'].split('/')[4]        
-       #     state = status['rf_data'].split('/')[5]        
-            ts = time.time()
-            st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-            firebase.put('/device/'+DEVICE_ID+'/packet/', st, {'moisture': moisture_reading})
-            firebase.put('/device/'+DEVICE_ID+'/packet/'+st, {'temperature': temperature_reading})
-            print "MOISTURE: " + moisture_reading
-            print "TEMP: " + temperature_reading
-            #print "CURR_STATE: " + state
+            if len(str(status['rf_data'])) > 11:
+                moisture_reading = status['rf_data'].split('/')[1]
+                temperature_reading = status['rf_data'].split('/')[4]        
+                state = status['rf_data'].split('/')[5]        
+                ts = time.time()
+                st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'moisture', moisture_reading)#,
+                firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'temperature', temperature_reading)
+                if (int(float(state)) > 1):
+                    firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'valve_state', "OPEN")
+                else:
+                    firebase.put('/device/' + DEVICE_ID + '/packet/'+st, 'valve_state', "CLOSED")
+                print "MOISTURE: " + moisture_reading
+                print "TEMP: " + temperature_reading
+                print "CURR_STATE: " + state
+                ser.flushInput()
+                ser.flushOutput()
     except KeyboardInterrupt:
         break
