@@ -96,7 +96,7 @@
 </md-tab>
 <md-tab label="Jobs">
 <div ng-controller="CommandCtrl" ng-cloak>
-	<md-list>
+	<md-list layout-padding>
 	<md-list-item ng-repeat="command in commands | orderBy:'-time'">
 	<div class="md-list-item-text">
 		<h4>{{ command.time }}</h4>
@@ -110,7 +110,7 @@
 <md-tab label="Settings">
 <md-subheader class="md-primary">Device Info</md-subheader>
 <div ng-controller="ConfigCtrl" ng-cloak>
-	<md-list>
+	<md-list layout-padding>
 	<md-list-item ng-repeat="config in configs">
 	<md-input-container>
 	<label>{{ config.$id }}</label>
@@ -119,11 +119,34 @@
 	</md-list-item>
 	</md-list>
 </div>
+<md-divider></md-divider>
 <md-subheader class="md-primary">Commands</md-subheader>
 <div ng-controller="CommandCtrl" ng-cloak>
-	<md-button class="md-raised md-primary" ng-click="sendEnable()">
-	Enable device
-	</md-button>
+	<md-list layout-padding>
+	<md-list-item>
+	<p>Enable the device</p><span flex></span>
+	<md-button class="md-raised md-primary" ng-click="sendEnable()">Enable</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Disable the device</p><span flex></span>
+	<md-button class="md-raised md-warn" ng-click="sendDisable()">Disable</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Halt the device (minutes)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.halt" min="0" max="255" aria-label="delay"></md-slider>
+	<md-button class="md-raised" ng-click="sendHalt()">Halt</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Change moisture setpoint (%)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.setpoint" min="0" max="100" aria-label="delay"></md-slider>
+	<md-button class="md-raised" ng-click="sendSetpoint()">Setpoint</md-button>
+	</md-list-item>
+	<md-list-item>
+	<p>Change moisture offset (%)</p>
+	<md-slider class="md-accent" flex md-discrete ng-model="configure.offset" min="0" max="100" aria-label="delay"></md-slider>
+	<md-button class="md-raised" ng-click="sendOffset()">Offset</md-button>
+	</md-list-item>
+	<md-list>
 </div>
 </md-tab>
 <md-tab label="Hackers">
@@ -217,6 +240,7 @@ app.factory("commandArray", ["$firebaseArray",
 app.controller("CommandCtrl", ["$scope", "commandArray",
 		function($scope, commandArray) {
 		$scope.commands = commandArray;
+		$scope.configure = {halt:0,setpoint:0,offset:0};
 		$scope.sendEnable = function() {
 		var ts = new Date().toUTCString();
 		$scope.commands.$add({
@@ -234,8 +258,35 @@ command: "DISABLE_SYSTEM_COMMAND",
 argument: 0
 });
 		$scope.command = "";
-		};	
-		}]);
+};
+$scope.sendHalt = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "HALT_SYSTEM_COMMAND",
+argument: $scope.configure.halt
+});
+$scope.command = "";
+};
+$scope.sendSetpoint = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "CHANGE_MOISTURE_SETPOINT",
+argument: $scope.configure.setpoint
+});
+$scope.command = "";
+};
+$scope.sendOffset = function() {
+	var ts = new Date().toUTCString();
+	$scope.commands.$add({
+time: ts,
+command: "CHANGE_MOISTURE_OFFSET",
+argument: $scope.configure.offset
+});
+$scope.command = "";
+};	
+}]);
 angular.module('ChartApp', ['chart.js'])
 .controller("MoistureCtrl", function($scope) {
 		});
