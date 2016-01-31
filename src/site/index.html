@@ -25,6 +25,7 @@
 <md-tabs md-dynamic-height>
 <md-tab label="Home"> 
 <div ng-controller="PacketCtrl" ng-cloak>
+	<md-progress-circular md-diameter="100" style="text-align:center"></md-progress-circular>
 	<md-content class="md-padding" layout-xs="column" layout="column"> 
 	<md-card ng-repeat="packet in packets">
 	<md-card-title>
@@ -177,7 +178,9 @@ angular.module('FirebaseApp', ['firebase'])
 		}])
 .controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
+		$scope.loading = true;
 		$scope.packets = packetArray;
+		$scope.loading = false;
 		}
 ]);
 angular.module('ChartApp', ['chart.js'])
