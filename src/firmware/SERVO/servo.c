@@ -13,7 +13,7 @@ void InitializeServoPin (void)
   SERVO_PORT &= 0;
   servo_state = malloc(sizeof(SERVO_STATE));
   servo_state->state = SERVO_CLOSED;
-  servo_state->duty_cycle_state = SERVO_DUTY_ON;
+  servo_state->duty_cycle_state = SERVO_DUTY_OFF;
   servo_state->duty_count = 13;
 }
 
@@ -27,6 +27,7 @@ void ChangeServoState(uint8_t state)
   TIMSK2 |= (1 << TOIE0);
   servo_state->duty_count = (servo_state->state == SERVO_OPEN ? 10 : 13);
   servo_state->state = state;
+  servo_state->duty_cycle_state = SERVO_DUTY_ON;
   TCNT2 = ((servo_state->state == SERVO_OPEN) ? 0x0612 : 0x048E); // this is the timer
   sei();
 }
@@ -50,6 +51,6 @@ ISR(TIMER2_OVF_vect)
     freq = 0;
   }
   */
-  SERVO_PORT ^= SERVO_ON_SETTING;
+  //SERVO_PORT ^= SERVO_ON_SETTING;
   TCNT2= (servo_state->state == SERVO_OPEN ? 0x0612 : 0x048E); // this is the timer
 }
