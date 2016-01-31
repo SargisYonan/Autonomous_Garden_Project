@@ -97,16 +97,18 @@
 <md-tab label="Jobs">
 <div ng-controller="CommandCtrl" ng-cloak>
 	<md-list layout-padding>
-	<md-list-item ng-repeat="command in commands | orderBy:'-time'">
-	<div class="md-list-item-text">
+	<div ng-repeat="command in commands | orderBy:'time'">
+		<md-list-item>
 		<h4>{{ command.time }}</h4>
+		<span flex></span>
+		<md-button class="md-raised md-warn" ng-click="commands.$remove(command)">Cancel</md-button>
 		<md-chips readonly>
 		<md-chip class="md-primary">{{ command.command }}</md-chip>
 		<md-chip>{{ command.argument }}</md-chip>
-		<md-chips>	
+		<md-chips>
+		</md-list-item>
+		<md-divider></md-divider>
 	</div>
-	<md-divider></md-divider>
-	</md-list-item>
 	</md-list>
 </div>
 </md-tab>
@@ -237,13 +239,13 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		}]);
 app.factory("commandArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/command/').limitToLast(50);
+		var ref = new Firebase(mixtapebase + deviceid + '/command/').limitToFirst(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("CommandCtrl", ["$scope", "commandArray",
 		function($scope, commandArray) {
 		$scope.commands = commandArray;
-		$scope.configure = {halt:0,setpoint:0,offset:0};
+		$scope.configure = {halt:0,setpoint:0,offset:0};	
 		$scope.sendEnable = function() {
 		var ts = new Date().toUTCString();
 		$scope.commands.$add({
@@ -252,7 +254,7 @@ command: "ENABLE_SYSTEM_COMMAND",
 argument: 0
 });
 		$scope.command = "";
-		};	
+		};
 		$scope.sendDisable = function() {
 		var ts = new Date().toUTCString();
 		$scope.commands.$add({
@@ -260,7 +262,7 @@ time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
 argument: 0
 });
-		$scope.command = "";
+$scope.command = "";
 };
 $scope.sendHalt = function() {
 	var ts = new Date().toUTCString();
