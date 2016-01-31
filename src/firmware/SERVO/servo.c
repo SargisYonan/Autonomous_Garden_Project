@@ -5,10 +5,10 @@
 #include "servo.h"
 #include <stdbool.h>
 bool SERVO_FLAG;
-int SERVO_COUNT;
-int SERVO_COUNT_TWO;
-int SERVO_TIME;
-int ISR_COUNT;
+volatile int SERVO_COUNT;
+volatile int SERVO_COUNT_TWO;
+volatile int SERVO_TIME;
+volatile int ISR_COUNT;
 
 void InitializeServoPin (void)
 {
@@ -32,8 +32,10 @@ void ChangeServoState(uint8_t state)
   TCCR3A = 0;    // set entire TCCR1A register to 0
   TCCR3B = 0;    // set entire TCCR1B register to 0
   TCCR3B |= (1 << CS11); // clk/8 prescaler
-  TIMSK3 |= (1 << TOIE1);
-  TCNT3 = 1000; // this should effectively make a .5 ms ISR
+  OCR3A = 999;
+  TCCR3B |= (1 << WGM12); // compare mode stuff
+  TIMSK3 |= (1 << OCIE1A);
+  //TCNT3 = 1000; // this should effectively make a .5 ms ISR
   SERVO_PORT &= 0x00;
   SERVO_PORT |= SERVO_ON_SETTING;
   sei();
@@ -58,7 +60,7 @@ void ChangeServoState(uint8_t state)
    */
 }
 
-ISR(TIMER3_OVF_vect) 
+ISR(TIMER3_COMPA_vect) // now in compare mode
 {
   //if (ISR_COUNT == 1000) {
     //ISR_COUNT = 0;
@@ -81,5 +83,5 @@ ISR(TIMER3_OVF_vect)
   //} else {
   //  ISR_COUNT++;
  // }
-  TCNT3 = 1000;
+  //OCR3A = 999;
 }
