@@ -101,7 +101,10 @@
 <div ng-controller="ConfigCtrl" ng-cloak>
 	<md-list>
 	<md-list-item ng-repeat="config in configs">
-	<p>{{ config }}</p>
+	<md-input-container>
+		<label>{{ config.$id }}</label>
+		<input ng-model="config.$value" ng-change="configs.$save(config)">
+	</md-input-container>
 	</md-list-item>
 	</md-list>
 </div>
