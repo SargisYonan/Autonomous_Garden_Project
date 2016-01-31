@@ -7,7 +7,7 @@
 #include "SENSOR_DRIVER/sensors.h"
 #include "UART/uart.h"
 #include "STATE_MACHINE/finite_state_machine.h"
-
+#include "ONE_WIRE/one_wire.h"
 CHECK_t SysInit (void);
 
 STATE_FUNCTIONS Output[] = {{&CLOSE_VALVE},{&CLOSE_VALVE},{&OPEN_VALVE}};
