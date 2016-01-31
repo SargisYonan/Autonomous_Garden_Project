@@ -105,7 +105,7 @@ while True:
         result = firebase.get('/device/'+DEVICE_ID+'/command/', None)
         for key, value in result.items():
             rxCom = value['command']
-            rxArg = '0x' + value['argument']
+            rxArg = '0x' + str(value['argument'])
             print rxArg
             Generator.GenerateByteArray(FunctionMap[rxCom], rxArg)
             Generator.SendFrame(ser)
