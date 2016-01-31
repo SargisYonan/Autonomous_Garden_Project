@@ -46,6 +46,7 @@
 </md-tab>
 <md-tab label="Data">
 <div ng-controller="PacketCtrl" ng-cloak>
+<md-subheader class="md-primary">Device is currently </md-subheader>
 	<md-content class="md-padding" layout-xs="column" layout="row">
 	<md-card flex>
 	<md-card-title>
@@ -251,7 +252,7 @@ app.controller("CommandCtrl", ["$scope", "commandArray",
 		$scope.commands.$add({
 time: ts,
 command: "ENABLE_SYSTEM_COMMAND",
-argument: 0
+argument: '0x0'
 });
 		$scope.command = "";
 		};
@@ -260,7 +261,7 @@ argument: 0
 		$scope.commands.$add({
 time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
-argument: 0
+argument: '0x0'
 });
 $scope.command = "";
 };
@@ -269,7 +270,7 @@ $scope.sendHalt = function() {
 	$scope.commands.$add({
 time: ts,
 command: "HALT_SYSTEM_COMMAND",
-argument: $scope.configure.halt
+argument: '0x' + $scope.configure.halt.toString(16).toUpperCase()
 });
 $scope.command = "";
 };
@@ -278,7 +279,7 @@ $scope.sendSetpoint = function() {
 	$scope.commands.$add({
 time: ts,
 command: "CHANGE_MOISTURE_SETPOINT",
-argument: $scope.configure.setpoint
+argument: '0x' + $scope.configure.setpoint.toString(16).toUpperCase()
 });
 $scope.command = "";
 };
@@ -287,7 +288,7 @@ $scope.sendOffset = function() {
 	$scope.commands.$add({
 time: ts,
 command: "CHANGE_MOISTURE_OFFSET",
-argument: $scope.configure.offset
+argument: '0x' + $scope.configure.offset.toString(16).toUpperCase()
 });
 $scope.command = "";
 };	
