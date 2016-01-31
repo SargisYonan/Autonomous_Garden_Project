@@ -3,12 +3,16 @@
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include "servo.h"
-
-int freq = 0;
-    char test[101];
+#include <stdbool.h>
+bool SERVO_FLAG;
+int SERVO_COUNT;
+int SERVO_COUNT_TWO;
+int SERVO_TIME;
+int ISR_COUNT;
 
 void InitializeServoPin (void)
 {
+  SERVO_FLAG = false;
   SERVO_DDR |= SERVO_ON_SETTING;
   SERVO_PORT &= 0;
   servo_state = malloc(sizeof(SERVO_STATE));
@@ -20,52 +24,63 @@ void InitializeServoPin (void)
 void ChangeServoState(uint8_t state)
 {
   cli();
+  ISR_COUNT = 0;
+  SERVO_TIME = 0;
+  SERVO_COUNT = 0;
+  if (state == SERVO_OPEN) SERVO_COUNT_TWO = 3;
+  else SERVO_COUNT_TWO = 4;
+  TCCR3A = 0;    // set entire TCCR1A register to 0
+  TCCR3B = 0;    // set entire TCCR1B register to 0
+  TCCR3B |= (1 << CS11); // clk/8 prescaler
+  TIMSK3 |= (1 << TOIE1);
+  TCNT3 = !0; // this is the timer
+  SERVO_PORT &= 0x00;
+  SERVO_PORT |= SERVO_ON_SETTING;
+  sei();
+
+  /*
+  cli();
   freq  = 0;
   TCCR2A = 0;    // set entire TCCR2A register to 0
   TCCR2B = 0;    // set entire TCCR2B register to 0
   TCCR2B |= (1 << CS10); // no prescaler
-  TIMSK2 |= (1 << TOIE0)
-  TCCR0A = 0;    // set entire TCCR0A register to 0
-  TCCR0B = 0;    // set entire TCCR0B register to 0
-  TCCR0B |= (1 << CS10); // no prescaler
-  TIMSK0 |= (1 << TOIE0);
+  TIMSK2 |= (1 << TOIE0);
+  TCCR3A = 0;    // set entire TCCR0A register to 0
+  TCCR3B = 0;    // set entire TCCR0B register to 0
+  TCCR3B |= (1 << CS10); // no prescaler
+  TIMSK3 |= (1 << TOIE0);
   servo_state->duty_count = (servo_state->state == SERVO_OPEN ? 10 : 13);
   servo_state->state = state;
   servo_state->duty_cycle_state = SERVO_DUTY_ON;
   TCNT2 = ((servo_state->state == SERVO_OPEN) ? 0x0612 : 0x048E); // this is the timer
-  TCNT0 = 0xF2E1;
+  TCNT3 = 0xF2E1;
   sei();
-}
-
-ISR(TIMER2_OVF_vect) 
-{
-  servo_state->duty_count--;
-  if (servo_state->duty_cycle_state == SERVO_DUTY_ON) {
-    servo_state->duty_cycle_state = SERVO_DUTY_OFF;
-    SERVO_PORT ^= SERVO_ON_SETTING;
-  } else if (servo_state->duty_count <= 0) {
-
-  } else if (false) {
-    SERVO_PORT ^= SERVO_ON_SETTING;
-    servo_state->duty_cycle_state = SERVO_DUTY_ON;
-    servo_state->duty_count = (servo_state->state == SERVO_OPEN ? 10 : 13);
-  }
-  /*
-  freq++;
-  if (freq > 500) {
-    sprintf(test, "if valve is open, this should have taken 1 second %d\n", freq);
-    uart0_puts(test);
-    freq = 0;
-  }
   */
-  //SERVO_PORT ^= SERVO_ON_SETTING;
 }
 
-ISR(TIMER0_OVF_vect) {
+ISR(TIMER3_OVF_vect) 
+{
+  if (ISR_COUNT == 100) {
+    ISR_COUNT = 0;
+  if (SERVO_TIME >= 0) SERVO_TIME++;
+  if (SERVO_COUNT == 40)
+  {
+    SERVO_PORT |= SERVO_ON_SETTING;
+    SERVO_COUNT = 0;
+    SERVO_TIME = 0;
+  }
+  else SERVO_COUNT++;
 
 
-  TCNT0 = 0xF2E1;
-  TCNT2= (servo_state->state == SERVO_OPEN ? 0x0612 : 0x048E); // this is the timer
-  SERVO_PORT ^= SERVO_ON_SETTING;
+  if (SERVO_COUNT_TWO == SERVO_TIME) 
+    {
+      SERVO_PORT &= 0x00;
+      SERVO_TIME = -1; 
+    }
+  //TCNT3=0x0; // this is the timer
 
+} else {
+  ISR_COUNT++;
+}
+  TCNT3 = !0;
 }
