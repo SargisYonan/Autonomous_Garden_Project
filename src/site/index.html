@@ -178,7 +178,7 @@
 </md-content>
 </div>
 
-<!-- Better libraries, better frameworks, PapaJOHNS -->
+<!-- Better libraries, better frameworks, PapaJS -->
 
 <!-- Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -192,12 +192,6 @@
 <!-- Firebase -->
 <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
-
-<!-- Angular Chart -->
-<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.min.js"></script>
-<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.min.js.map"></script>
-<script src="http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.css"></script>
-<script src-"http://cdn.jsdelivr.net/angular.chartjs/0.7.6/angular-chart.css.map"></script>
 
 <!-- Your application bootstrap  -->
 <script type="text/javascript">    
@@ -251,7 +245,7 @@ app.controller("CommandCtrl", ["$scope", "commandArray",
 		$scope.commands.$add({
 time: ts,
 command: "ENABLE_SYSTEM_COMMAND",
-argument: 0
+argument: '0'
 });
 		$scope.command = "";
 		};
@@ -260,7 +254,7 @@ argument: 0
 		$scope.commands.$add({
 time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
-argument: 0
+argument: '0'
 });
 $scope.command = "";
 };
@@ -269,7 +263,7 @@ $scope.sendHalt = function() {
 	$scope.commands.$add({
 time: ts,
 command: "HALT_SYSTEM_COMMAND",
-argument: $scope.configure.halt
+argument: $scope.configure.halt.toString(16).toUpperCase()
 });
 $scope.command = "";
 };
@@ -278,7 +272,7 @@ $scope.sendSetpoint = function() {
 	$scope.commands.$add({
 time: ts,
 command: "CHANGE_MOISTURE_SETPOINT",
-argument: $scope.configure.setpoint
+argument: $scope.configure.setpoint.toString(16).toUpperCase()
 });
 $scope.command = "";
 };
@@ -287,14 +281,11 @@ $scope.sendOffset = function() {
 	$scope.commands.$add({
 time: ts,
 command: "CHANGE_MOISTURE_OFFSET",
-argument: $scope.configure.offset
+argument: $scope.configure.offset.toString(16).toUpperCase()
 });
 $scope.command = "";
 };	
 }]);
-angular.module('ChartApp', ['chart.js'])
-.controller("MoistureCtrl", function($scope) {
-		});
 angular.module('PlantApp', ['MaterialApp', 'FirebaseApp']);
 </script>
 </body>
