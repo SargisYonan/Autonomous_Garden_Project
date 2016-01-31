@@ -4,14 +4,16 @@
 #include "sysclk.h"
 
 int count;
+State lastState;
 
 void idle_hours(int hours) {
 
   cli();
+  lastState = SystemStatus->state;
 
   SystemStatus->state = IDLE;
 
-  count = (hours * * 60 * 60 * 2); // 2 is because ISR hits every .5 sec
+  count = (hours * 60 * 60); // 2 is because ISR hits every .5 sec
 
   TCCR1A = 0;    // set entire TCCR1A register to 0
 
@@ -30,10 +32,10 @@ void idle_hours(int hours) {
 void idle_mins(int mins) {
 
   cli();
-
+  lastState = SystemStatus->state;
   SystemStatus->state = IDLE;
 
-  count = (mins * 60 * 2); // 2 is because default ISR hits every .5 sec
+  count = (mins * 60); // 2 is because default ISR hits every .5 sec
 
   //count  = 1; // testing
 
@@ -53,13 +55,10 @@ void idle_mins(int mins) {
 
 ISR(TIMER1_OVF_vect) {
 
-<<<<<<< HEAD
   //TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
-=======
-  //uart0_puts("\nTEIUYSKJS>FKUHSÇÒH\n");
->>>>>>> f2520993bdab4f4700c73299fe8dccfad568a396
   if (--count <= 0) {
-    SystemStatus->state = VALVE_CLOSED;
+    uart0_puts("FINISHED\n");
+    SystemStatus->state = lastState;
     TCCR1B = 0;
   } else {
     TCNT1=0x0BDC;
