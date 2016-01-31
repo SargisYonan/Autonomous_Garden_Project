@@ -21,15 +21,15 @@ ser.flushOutput()
 
 
 FunctionMap = {
-'GET_STATUS_COMMAND':"0xAA",
-'ENABLE_SYSTEM_COMMAND':"0xEE",
-'HALT_SYSTEM_COMMAND':"0x56",
-'DISABLE_SYSTEM_COMMAND':"0xDD",
-'GET_MOISTURE_READING_COMMAND':"0xBB",
-'GET_TEMP_READING_COMMAND':"0xCC",
-'GET_TEMP_READING_COMMAND':"0x56",
-'CHANGE_MOISTURE_SETPOINT':"0xFF",
-'CHANGE_MOISTURE_OFFSET':"0x11"
+'GET_STATUS_COMMAND':"AA",
+'ENABLE_SYSTEM_COMMAND':"EE",
+'HALT_SYSTEM_COMMAND':"56",
+'DISABLE_SYSTEM_COMMAND':"DD",
+'GET_MOISTURE_READING_COMMAND':"BB",
+'GET_TEMP_READING_COMMAND':"CC",
+'GET_TEMP_READING_COMMAND':"56",
+'CHANGE_MOISTURE_SETPOINT':"FF",
+'CHANGE_MOISTURE_OFFSET':"11"
 }
 NO_ARG = "00"
 DEVICE_ID = '4200000069'
@@ -98,19 +98,19 @@ while True:
                 ser.flushOutput()
 
 
-
-
-
-
         result = firebase.get('/device/'+DEVICE_ID+'/command/', None)
-        for key, value in result.items():
-            rxCom = value['command']
-            rxArg = '0x' + str(value['argument'])
-            print rxArg
-            Generator.GenerateByteArray(FunctionMap[rxCom], rxArg)
-            Generator.SendFrame(ser)
-            status = xbee.wait_read_frame()
-            while not status.has_key("rf_data"):
+        
+        if result:
+            for key, value in result.items():
+                rxCom = value['command']
+                rxArg = value['argument']
+                if str(rxArg) == "0":
+                    rxArg = "00"
+
+                print rxCom
+                Generator.GenerateByteArray(FunctionMap[rxCom], rxArg)
+                Generator.SendFrame(ser)
+                status = xbee.wait_read_frame()
                 firebase.delete('/device/'+DEVICE_ID+'/command/', key)
 
     except KeyboardInterrupt:
