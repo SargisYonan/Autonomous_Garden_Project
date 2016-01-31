@@ -10,7 +10,7 @@
 #define SERVO_DUTY_OFF 0
 
 void InitializeServoPin (void);
-void changeServoState(uint8_t state);
+void ChangeServoState(uint8_t state);
 
 typedef struct SERVO_STATE
 {

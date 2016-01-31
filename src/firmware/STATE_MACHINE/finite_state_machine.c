@@ -1,7 +1,7 @@
 // Finite State Machine Definition
 #include "finite_state_machine.h"
 #include "../SYSCLK/sysclk.h"
-
+#include "../SERVO/servo.h"
 /*
 NAME:   InitializeStateMachineStructure
 INPUT   pointer to a SYSTEM to allocate and initialize
@@ -147,11 +147,11 @@ CHECK_t ChangeState (void)
 /* Actuates valve open */
 void OPEN_VALVE (void)
 {
-    PORTB = 0x80;//\if (VALVE_STATUS_CLOSED) VALVE_SWITCH_OPEN;  // PB5
+    ChangeServoState(SERVO_OPEN);
 }
 
 /* Actuates valve closed */
 void CLOSE_VALVE (void)
 {
-    PORTB = 0x00;//if (VALVE_STATUS_OPEN) VALVE_SWITCH_CLOSE; // PB5
+    ChangeServoState(SERVO_CLOSED);
 }
