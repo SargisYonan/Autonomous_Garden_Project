@@ -97,10 +97,10 @@
 <md-tab label="Jobs">
 <div ng-controller="CommandCtrl" ng-cloak>
 	<md-list>
-	<md-list-item ng-repeat="command in commands | orderBy:'-$id'">
+	<md-list-item ng-repeat="command in commands | orderBy:'-time'">
 	<div class="md-list-item-text">
-		<h4>{{ command.$id }}</h4>
-		<p><strong>{{command.command}}</strong> {{command.argument}}</p>
+		<h4>{{ command.time }}</h4>
+		<p>{{command.command}} <em>{{command.argument}}</em></p>
 	</div>
 	<md-divider></md-divider>
 	</md-list-item>
@@ -121,7 +121,7 @@
 </div>
 <md-subheader class="md-primary">Commands</md-subheader>
 <div ng-controller="CommandCtrl" ng-cloak>
-	<md-button class="md-raised md-primary" ng-click="">
+	<md-button class="md-raised md-primary" ng-click="sendEnable()">
 	Enable device
 	</md-button>
 </div>
@@ -193,7 +193,7 @@ angular.module('MaterialApp', ['ngMaterial'])
 var app = angular.module('FirebaseApp', ['firebase']);
 app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/packet/').limit(50);	
+		var ref = new Firebase(mixtapebase + deviceid + '/packet/').limitToLast(100);	
 		return $firebaseArray(ref);
 		}]);
 app.controller("PacketCtrl", ["$scope", "packetArray",
@@ -202,7 +202,7 @@ app.controller("PacketCtrl", ["$scope", "packetArray",
 		}]);
 app.factory("configArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/config/').limit(50);
+		var ref = new Firebase(mixtapebase + deviceid + '/config/').limitToLast(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("ConfigCtrl", ["$scope", "configArray",
@@ -211,24 +211,27 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		}]);
 app.factory("commandArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/command/').limit(50);
+		var ref = new Firebase(mixtapebase + deviceid + '/command/').limitToLast(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("CommandCtrl", ["$scope", "commandArray",
 		function($scope, commandArray) {
 		$scope.commands = commandArray;
 		$scope.sendEnable = function() {
-		console.log('Ran sendEnable()');
+		var ts = new Date().toUTCString();
 		$scope.commands.$add({
+time: ts,
 command: "ENABLE_SYSTEM_COMMAND",
-argument: "0"
+argument: 0
 });
 		$scope.command = "";
-		};
+		};	
 		$scope.sendDisable = function() {
+		var ts = new Date().toUTCString();
 		$scope.commands.$add({
+time: ts,
 command: "DISABLE_SYSTEM_COMMAND",
-argument: "0"
+argument: 0
 });
 		$scope.command = "";
 		};	
