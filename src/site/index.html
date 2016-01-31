@@ -13,8 +13,9 @@
 	<md-icon aria-label="local_florist" class="material-icons">local_florist</md-icon>
 	</md-button>
 	<h2>
-		<span>AutoGarden</span>
+		<span>#AutoGarden</span>
 	</h2>
+	<md-progress-circular class="md-accent"></md-progress-circular>
 	<span flex></span>
 	<md-button aria-label="GitHub" href="http://github.com/SargisYonan/Autonomous_Garden_Project">View source on GitHub
 	<md-icon aria-label="track_changes" class="material-icons">track_changes</md-icon>
@@ -23,12 +24,8 @@
 </md-toolbar>
 <md-content>
 <md-tabs md-dynamic-height>
-<md-tab label="Home"> 
+<md-tab label="Home">
 <div ng-controller="PacketCtrl" ng-cloak>
-	<div ng-show="loading" style="margin:auto;width:100;height:100">
-		<md-progress-circular md-diameter="100" style="text-align:center">
-		</md-progress-circular>
-	</div>
 	<md-content class="md-padding" layout-xs="column" layout="column"> 
 	<md-card ng-repeat="packet in packets | orderBy:'-$id'">
 	<md-card-title>
@@ -97,22 +94,42 @@
 	</md-content>
 </div>
 </md-tab>
+<md-tab label="Jobs">
+<div ng-controller="CommandCtrl" ng-cloak>
+	<md-list>
+	<md-list-item ng-repeat="command in commands | orderBy:'-$id'">
+	<div class="md-list-item-text">
+		<h4>{{ command.$id }}</h4>
+		<p><strong>{{command.command}}</strong> {{command.argument}}</p>
+	</div>
+	<md-divider></md-divider>
+	</md-list-item>
+	</md-list>
+</div>
+</md-tab>
 <md-tab label="Settings">
+<md-subheader class="md-primary">Device Info</md-subheader>
 <div ng-controller="ConfigCtrl" ng-cloak>
 	<md-list>
 	<md-list-item ng-repeat="config in configs">
 	<md-input-container>
-		<label>{{ config.$id }}</label>
-		<input ng-model="config.$value" ng-change="configs.$save(config)">
+	<label>{{ config.$id }}</label>
+	<input ng-model="config.$value" ng-change="configs.$save(config)">
 	</md-input-container>
 	</md-list-item>
 	</md-list>
+</div>
+<md-subheader class="md-primary">Commands</md-subheader>
+<div ng-controller="CommandCtrl" ng-cloak>
+	<md-button class="md-raised md-primary" ng-click="">
+	Enable device
+	</md-button>
 </div>
 </md-tab>
 <md-tab label="Hackers">
 <div ng-controller="HackerCtrl" ng-cloak>
 	<md-content class="md-padding" layout-xs="row" layout="column">
-	<md-card ng-repeat="hacker in hackers">
+	<md-card ng-repeat="hacker in hackers | orderBy:'name'">
 	<md-card-header>
 	<md-card-avatar>
 	<img class="md-user-avatar" src="{{ hacker.img }}"/>
@@ -176,18 +193,16 @@ angular.module('MaterialApp', ['ngMaterial'])
 var app = angular.module('FirebaseApp', ['firebase']);
 app.factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/packet/');
+		var ref = new Firebase(mixtapebase + deviceid + '/packet/').limit(50);	
 		return $firebaseArray(ref);
 		}]);
 app.controller("PacketCtrl", ["$scope", "packetArray",
 		function($scope, packetArray) {
-		$scope.loading = true;
 		$scope.packets = packetArray;
-		$scope.loading = false;
 		}]);
 app.factory("configArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/config/');
+		var ref = new Firebase(mixtapebase + deviceid + '/config/').limit(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("ConfigCtrl", ["$scope", "configArray",
@@ -196,12 +211,27 @@ app.controller("ConfigCtrl", ["$scope", "configArray",
 		}]);
 app.factory("commandArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var ref = new Firebase(mixtapebase + deviceid + '/command/');
+		var ref = new Firebase(mixtapebase + deviceid + '/command/').limit(50);
 		return $firebaseArray(ref);
 		}]);
 app.controller("CommandCtrl", ["$scope", "commandArray",
 		function($scope, commandArray) {
-		$scope.command = commandArray;
+		$scope.commands = commandArray;
+		$scope.sendEnable = function() {
+		console.log('Ran sendEnable()');
+		$scope.commands.$add({
+command: "ENABLE_SYSTEM_COMMAND",
+argument: "0"
+});
+		$scope.command = "";
+		};
+		$scope.sendDisable = function() {
+		$scope.commands.$add({
+command: "DISABLE_SYSTEM_COMMAND",
+argument: "0"
+});
+		$scope.command = "";
+		};	
 		}]);
 angular.module('ChartApp', ['chart.js'])
 .controller("MoistureCtrl", function($scope) {
