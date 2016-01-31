@@ -25,23 +25,21 @@
 <md-tabs md-dynamic-height>
 <md-tab label="Home"> 
 <div ng-controller="PacketCtrl" ng-cloak>
-	<md-progress-circular md-diameter="100" style="text-align:center"></md-progress-circular>
+	<div ng-show="loading" style="margin:auto;width:100;height:100">
+		<md-progress-circular md-diameter="100" style="text-align:center">
+		</md-progress-circular>
+	</div>
 	<md-content class="md-padding" layout-xs="column" layout="column"> 
 	<md-card ng-repeat="packet in packets">
 	<md-card-title>
 	<md-card-title-text>
-	<span class="md-headline">{{ packet.time }}</span>
+	<span class="md-headline">{{ packet.$id }}</span>
 	</md-card-title-text>
 	</md-card-title>
 	<md-card-content>
 	<md-list>
-	<md-list-item><p>Moisture: {{ packet.moist }}</p></md-list-item>
-	<md-divider></md-divider>
-	<md-list-item><p>Rain: {{ packet.rain }}</p></md-list-item>
-	<md-divider></md-divider>
-	<md-list-item><p>Sunlight: {{ packet.sun }}</p></md-list-item>
-	<md-divider></md-divider>
-	<md-list-item><p>Temperature: {{ packet.temp }}</p></md-list-item>
+	<md-list-item><p>Moisture: {{ packet.moisture }}</p></md-list-item>
+	<md-list-item><p>Temperature: {{ packet.temperature }}</p></md-list-item>
 	</md-list>
 	</md-card-content>
 	</md-card>
@@ -66,9 +64,9 @@
 	</md-list-item>
 	<md-list-item ng-repeat="packet in packets">
 	<md-divider md-inset></md-divider>
-	<p>{{ packet.time }}</p>
+	<p>{{ packet.$id }}</p>
 	<span flex></span>
-	<p align="right">{{ packet.moist }}</p>
+	<p align="right">{{ packet.moisture }}</p>
 	</md-list-item>
 	</md-list>
 	</md-card-content>
@@ -114,17 +112,7 @@
 	<md-card-actions>
 	<md-button href="http://github.com/{{ hacker.git }}">GitHub</md-button>
 	</md-card-actions>
-	</md-card>
-	<md-card>
-	<md-card-title>
-	<md-card-title-text>
-	<span class="md-headline">Info</span>
-	</md-card-title-text>
-	</md-card-title>
-	<md-card-content>
-	<p>This project was made during HACK UCSC 2016.</p>
-	</md-card-content>
-	<md-card>
+	</md-card>	
 	</md-content>
 </div>
 </md-tab>
@@ -156,6 +144,8 @@
 <!-- Your application bootstrap  -->
 <script type="text/javascript">    
 var betterIngredientsBetterPizza = "Papa Johns";
+// http://urbandictionary.com/define.php?term=my+mixtape
+var mixtapebase = 'https://burning-fire-9965.firebaseio.com/device/'; 
 angular.module('MaterialApp', ['ngMaterial'])
 .config(function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
@@ -172,8 +162,9 @@ angular.module('MaterialApp', ['ngMaterial'])
 angular.module('FirebaseApp', ['firebase'])
 .factory("packetArray", ["$firebaseArray",
 		function($firebaseArray) {
-		var id = "0";
-		var ref = new Firebase('https://burning-fire-9965.firebaseio.com/device/' + id + '/packet/');
+	  var id = "4200000069";
+		//id = 0;
+		var ref = new Firebase(mixtapebase + id + '/packet/');
 		return $firebaseArray(ref);
 		}])
 .controller("PacketCtrl", ["$scope", "packetArray",
