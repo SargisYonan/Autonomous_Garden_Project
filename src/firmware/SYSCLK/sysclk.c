@@ -3,11 +3,11 @@
 #include "../STATE_MACHINE/finite_state_machine.h"
 #include "sysclk.h"
 
-float count;
+int count;
 States lastState;
 char finishedPacket[] = "0x81";
 
-void idle_hours(float hours) 
+void idle_hours(int hours) 
 {
   cli();
   lastState = SystemStatus->state;
@@ -22,7 +22,7 @@ void idle_hours(float hours)
   sei();
 }
 
-void idle_mins(float mins) 
+void idle_mins(int mins) 
 {
   cli();
   lastState = SystemStatus->state;
