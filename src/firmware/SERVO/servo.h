@@ -1,19 +1,10 @@
+#define SERVO_PORT PORTH
+#define SERVO_DDR DDRH
+#define SERVO_PIN_NUMBER 4
+#define SERVO_PIN PINH
+#define SERVO_ON_SETTING 0x10
 
-// Min/Max values that the servos can handle
-#define PWM_MAX         8750
-#define PWM_MIN         1250
-#define PWM_DEFAULT     3000
-#define PWM_PERIOD      125000
-#define TIMER_1_8_PRESCALE  0x02
-#define TIMER_1_IR_ENABLE   0x02
+void InitializeServoPin (void);
+void BULLSHIT(void);
 
 
-struct servo {
-    unsigned int duty;
-    unsigned char state;
-    
-};
-
-int init_servos(void);
-int set_servo(int, int);
-int get_servo(int);
