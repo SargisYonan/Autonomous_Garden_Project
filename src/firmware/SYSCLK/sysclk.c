@@ -17,7 +17,11 @@ void idle_hours(int hours) {
 
   TCCR1B = 0;    // set entire TCCR1B register to 0
 
-  TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
+  TCCR1B |=(1 << CS12); // clk/1024 prescaler
+
+  TIMSK1 |= (1 << TOIE1);
+
+  TCNT1=0x0BDC; // this is the timer
 
   sei();
 
@@ -29,12 +33,19 @@ void idle_mins(int mins) {
 
   SystemStatus->state = IDLE;
 
-  count = mins;//(mins * 60 * 16000); // 16000 is because of clock speed
+  count = (mins * 60 * 16000); // 16000 is because of clock speed
+
+  count  = 1; // testing
+
   TCCR1A = 0;    // set entire TCCR1A register to 0
 
   TCCR1B = 0;    // set entire TCCR1B register to 0
 
-  TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
+  TCCR1B |= (1 << CS12); // clk/1024 prescaler
+
+  TIMSK1 |= (1 << TOIE1);
+
+  TCNT1=0x0BDC; // this is the timer
 
   sei();
 
@@ -42,11 +53,12 @@ void idle_mins(int mins) {
 
 ISR(TIMER1_OVF_vect) {
 
-  TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
-  uart0_puts("TEIUYSKJS>FKUHSÇÒH");
+  //TCCR1B |= (1 << CS10) | (1 << CS12); // clk/1024 prescaler
+  uart0_puts("\nTEIUYSKJS>FKUHSÇÒH\n");
   if (--count <= 0) {
     SystemStatus->state = VALVE_CLOSED;
-    TCCR1B = 0;
+  } else {
+    TCNT1=0x0BDC;
   }
 
 }
